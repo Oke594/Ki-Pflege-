@@ -1083,6 +1083,7 @@ h1,h2,h3{font-weight:600;line-height:1.12;margin:0;text-wrap:balance}
 .bar{flex:1;height:6px;border-radius:6px;background:var(--line);overflow:hidden;min-width:80px}
 .bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .5s}
 .tb{pointer-events:auto;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:500 15px "IBM Plex Sans",sans-serif;cursor:pointer;box-shadow:0 10px 30px -18px #0005}
+.tools{display:flex;gap:8px;pointer-events:auto}.tb.z{width:44px;padding:0;font-size:22px;line-height:1}
 .lbl{position:absolute;left:0;top:0;pointer-events:auto;display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;border:0;background:#ffffffee;color:#1b2629;font:500 14px "IBM Plex Sans",sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 6px 18px -8px #0006;transition:background .15s}
 .lbl .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1d6b70;color:#fff;font-size:13px;font-weight:600}
 .lbl.done .n{background:#fff;color:#1d6b70;box-shadow:inset 0 0 0 2px #1d6b70}
@@ -1130,7 +1131,7 @@ h1,h2,h3{font-weight:600;line-height:1.12;margin:0;text-wrap:balance}
 @media(max-width:700px){
  .top{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;gap:8px}
  .brand{padding:10px 14px;max-width:none;flex:1;border-radius:12px}.brand h1{font-size:18px}.brand p{display:none}.prog{font-size:13px;margin-top:6px}
- .tb{min-height:44px;padding:0 12px;font-size:14px;border-radius:12px}
+ .tb{min-height:44px;padding:0 12px;font-size:14px;border-radius:12px}.tools{flex-direction:column;gap:6px}.tools #home{order:-1}
  .lbl{padding:0}.lbl .t{display:none}.lbl .n{width:34px;height:34px;font-size:15px}
  .dock{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));padding:6px;gap:4px;border-radius:14px}
  .chip{padding:0 12px 0 6px;font-size:14px}
@@ -1154,7 +1155,7 @@ h1,h2,h3{font-weight:600;line-height:1.12;margin:0;text-wrap:balance}
  <div class="top">
   <div class="brand"><h1>KI in der Pflege</h1><p>Rundgang von der Ausgangslage über heutige Einsatzfelder bis zu Recht, Ethik und Fazit, mit abschließendem Wissenscheck.</p>
    <div class="prog" aria-live="polite"><span id="pc">0 von 9</span><span class="bar"><i id="pbar"></i></span></div></div>
-  <button class="tb" id="home">Übersicht</button>
+  <div class="tools"><button class="tb z" id="zin" aria-label="Hineinzoomen">+</button><button class="tb z" id="zout" aria-label="Herauszoomen">−</button><button class="tb" id="home">Übersicht</button></div>
  </div>
  <div class="hint" id="hint"><span class="hd">Ziehen zum Drehen · Scrollen zum Zoomen · Station anklicken</span><span class="hm">Wischen zum Drehen · zwei Finger zum Zoomen · Nummer antippen</span></div>
  <nav class="dock" id="dock" aria-label="Stationen"></nav>
@@ -1272,7 +1273,7 @@ R.outputEncoding=T.sRGBEncoding;R.toneMapping=T.ACESFilmicToneMapping;R.toneMapp
 const sc=new T.Scene();sc.background=new T.Color(0xdfe5e4);
 const cam=new T.PerspectiveCamera(42,1,.1,100);
 const ctl=new T.OrbitControls(cam,cv);
-ctl.enableDamping=true;ctl.enablePan=false;ctl.minDistance=2;ctl.maxDistance=26;ctl.maxPolarAngle=1.38;ctl.minPolarAngle=.35;
+ctl.enableDamping=true;ctl.enablePan=false;ctl.minDistance=2;ctl.maxDistance=45;ctl.maxPolarAngle=1.38;ctl.minPolarAngle=.35;
 ctl.minAzimuthAngle=.02;ctl.maxAzimuthAngle=1.5;
 const HOME={p:new T.Vector3(9.5,7.2,11),t:new T.Vector3(-.4,.7,-.9)};
 const homeP=()=>{const a=cv.clientWidth/Math.max(1,cv.clientHeight);return HOME.t.clone().add(HOME.p.clone().sub(HOME.t).multiplyScalar(a<1?1.6:1));};
@@ -1429,6 +1430,9 @@ cv.addEventListener("pointerdown",e=>{down=[e.clientX,e.clientY];$("hint").style
 cv.addEventListener("pointerup",e=>{if(down&&Math.hypot(e.clientX-down[0],e.clientY-down[1])<6){const s=hit(e);if(s>=0)show(s);else if(innerWidth<=700&&document.body.classList.contains("open"))hide();}down=null;});
 cv.addEventListener("pointermove",e=>{if(e.pointerType!=="mouse"||e.buttons)return;const s=hit(e);if(s!==hot){if(hot>=0)labels[hot].el.classList.remove("hot");hot=s;if(s>=0)labels[s].el.classList.add("hot");cv.style.cursor=s>=0?"pointer":"grab";}});
 ctl.addEventListener("start",()=>{F=null;});
+const zoom=k=>{F=null;const t=ctl.target,o=cam.position.clone().sub(t),d=Math.min(ctl.maxDistance,Math.max(ctl.minDistance,o.length()*k));
+ const p=t.clone().add(o.setLength(d));if(RM){cam.position.copy(p);return;}F={p0:cam.position.clone(),t0:t.clone(),p,t:t.clone(),k:0,s:performance.now()-700};};
+$("zin").onclick=()=>zoom(.75);$("zout").onclick=()=>zoom(1.35);
 setTimeout(()=>{$("hint").style.opacity=0;},7000);
 
 function size(){const w=cv.clientWidth,h=cv.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.fov=w<700?52:42;cam.updateProjectionMatrix();}
