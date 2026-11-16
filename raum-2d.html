@@ -5,261 +5,227 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KI in der Pflege – Virtueller Raum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* VOICE: warm, ruhig, zugewandt – wie eine gute Praxisanleiterin
-   IDEA: eine begehbare Pflegestation der Zukunft, jedes Möbel ist eine Lernstation
-   PICTURE: großes gezeichnetes Patientenzimmer mit Stationsecke, klickbare Hotspots
-   COLOUR and TYPE: Kasack-Petrol dominant, warme Wandfarbe, Koralle als Signal; Sora + Atkinson Hyperlegible
-   LAYOUT: Titelzeile, Raum vollbreit, Fortschritt darunter; Infotafel als Seitenleiste bzw. Bottom-Sheet */
+/* VOICE: sachlich und ruhig, wie eine Fortbildung einer Klinik
+   IDEA: ein flach gezeichnetes Pflegezimmer, jedes Möbel ist ein Thema
+   PICTURE: Raum in Frontansicht mit Whiteboard, Schreibtisch, Bett, Roboter, Regal und Bild
+   COLOUR and TYPE: Klinikweiß, helles Eichenholz, Petrol als Akzent; IBM Plex Sans
+   LAYOUT: Kopfzeile mit Forscherfrage, Raum, feste Themenleiste unten, Infotafel rechts bzw. von unten */
 :root{color-scheme:light dark;
---bg:light-dark(#f6efe6,#11201f);--wall:light-dark(#f2dcc6,#1c3433);--wall2:light-dark(#e8cdb3,#183030);
---floor:light-dark(#c99a6e,#2a2520);--floor2:light-dark(#b9885c,#231f1b);
---ink:light-dark(#18302f,#e9f1ef);--soft:light-dark(#4c605e,#a9bdb9);
---teal:light-dark(#0f7277,#3fb6b7);--teal2:light-dark(#0a5357,#1f8c8e);--coral:light-dark(#e8553a,#ff7a5c);
---card:light-dark(#fffaf4,#172a29);--line:light-dark(#e4d4c2,#2b4442);--white:light-dark(#ffffff,#d9e4e2)}
+--bg:light-dark(#e9edec,#0f1617);--card:light-dark(#ffffff,#162022);--ink:light-dark(#1b2629,#e6eeee);--soft:light-dark(#566468,#9fb0b2);
+--line:light-dark(#dde3e3,#263336);--acc:light-dark(#1d6b70,#4fb3b5);--acc-bg:light-dark(#e8f2f2,#1b3133)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif;overflow-x:clip}
-h1,h2,h3{font-family:Sora,system-ui,sans-serif;line-height:1.08;text-wrap:balance;margin:0}
-h1{font-size:clamp(30px,4.4vw,48px)}h2{font-size:clamp(24px,3vw,32px)}h3{font-size:19px}
-.band{padding:clamp(22px,3.4vw,48px) max(5vw,16px)}
-.wrap{max-width:1240px;margin:0 auto}
-header .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:end;justify-content:space-between}
-header p{margin:8px 0 0;color:var(--soft);max-width:60ch}
-.prog{display:flex;align-items:center;gap:12px;font-weight:700}
-.bar{width:180px;height:12px;border-radius:9px;background:var(--line);overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .5s}
-.stage{position:relative;max-width:1240px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 20px 50px -25px #0006}
-.stage svg{display:block;width:100%;height:auto}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip;padding-bottom:96px}
+h1,h2,h3{font-weight:600;line-height:1.12;margin:0;text-wrap:balance}
+header{max-width:1240px;margin:0 auto;padding:clamp(18px,3vw,36px) max(4vw,16px) 16px;display:flex;flex-wrap:wrap;gap:14px 32px;justify-content:space-between;align-items:end}
+h1{font-size:clamp(26px,3.6vw,42px)}
+.fq{margin:10px 0 0;max-width:68ch;color:var(--soft)}
+.fq b{color:var(--ink);font-weight:500}
+.prog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--soft);min-width:200px}
+.bar{flex:1;height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .5s}
+.stage{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
+.stage svg{display:block;width:100%;height:auto;border-radius:18px;box-shadow:0 20px 50px -28px #0006;background:#f1f0eb}
 .hs{cursor:pointer;outline:none}
-.hs .pin circle.r{fill:var(--coral);stroke:#fff;stroke-width:4}
-.hs .pin text{fill:#fff;font:700 22px Sora,sans-serif;text-anchor:middle;dominant-baseline:central;pointer-events:none}
-.hs .halo{fill:var(--coral);opacity:.35;transform-box:fill-box;transform-origin:center;animation:p 2.2s infinite}
-.hs.done .pin circle.r{fill:var(--teal)}.hs.done .halo{display:none}
-.hs:hover .obj,.hs:focus-visible .obj{filter:brightness(1.08) drop-shadow(0 0 10px #fff9)}
-.hs:focus-visible .pin circle.r{stroke:var(--ink);stroke-width:6}
-@keyframes p{0%{transform:scale(1);opacity:.45}100%{transform:scale(2.1);opacity:0}}
-@media(prefers-reduced-motion:reduce){.hs .halo{animation:none}.bar i,.panel{transition:none}}
-.hint{color:var(--soft);font-size:15px;margin:12px auto 0;max-width:1240px}
-.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:10px;max-width:1240px;margin:18px auto 0;padding:0;list-style:none}
-.list button{width:100%;min-height:52px;text-align:left;display:flex;gap:12px;align-items:center;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}
-.list button:focus-visible,.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
-.list b{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--coral);color:#fff;font-size:15px}
-.list .done b{background:var(--teal)}
-.scrim{position:fixed;inset:0;background:#0007;opacity:0;pointer-events:none;transition:opacity .25s;z-index:5}
-.panel{position:fixed;top:0;right:0;height:100%;width:min(520px,100%);background:var(--card);z-index:6;transform:translateX(105%);transition:transform .3s ease;overflow-y:auto;box-shadow:-20px 0 50px -20px #0007}
-.open .scrim{opacity:1;pointer-events:auto}.open .panel{transform:none}
-.ph{position:sticky;top:0;background:var(--teal);color:#fff;padding:22px 24px 20px;display:flex;gap:16px;align-items:start;justify-content:space-between}
-.ph small{display:block;font-weight:700;opacity:.85;margin-bottom:6px}
-.x{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:#ffffff26;color:#fff;font-size:26px;cursor:pointer}
-.pb{padding:22px 24px 30px}
-.pb p{margin:0 0 16px}
-.pb h3{margin:22px 0 8px}
-.pb ul{margin:0;padding-left:20px}.pb li{margin:6px 0}
-.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:18px}
-.two div{border-radius:14px;padding:14px 16px;background:light-dark(#e6f3f2,#1d3a39)}
-.two div+div{background:light-dark(#fde9e3,#3a2622)}
-.two h3{margin:0 0 6px;font-size:16px}
-.two ul{padding-left:18px;font-size:15.5px}
-.ask{margin-top:20px;border-left:4px solid var(--coral);padding:4px 0 4px 14px;font-style:italic}
-.nav{display:flex;gap:10px;justify-content:space-between;margin-top:26px;flex-wrap:wrap}
-.btn{min-height:46px;padding:0 18px;border-radius:12px;border:2px solid var(--teal);background:transparent;color:var(--teal);font:700 16px "Atkinson Hyperlegible",sans-serif;cursor:pointer}
-.btn.f{background:var(--teal);color:#fff}
-.opt{display:block;width:100%;text-align:left;min-height:48px;margin:8px 0;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:transparent;color:var(--ink);font:inherit;cursor:pointer}
-.opt.ok{border-color:var(--teal);background:light-dark(#e6f3f2,#1d3a39)}
-.opt.no{border-color:var(--coral);background:light-dark(#fde9e3,#3a2622)}
-.fb{font-size:15.5px;color:var(--soft);min-height:24px}
-.score{font:700 clamp(40px,8vw,64px) Sora,sans-serif;color:var(--teal);margin:8px 0}
-footer{color:var(--soft);font-size:14px;text-align:center}
-@media(max-width:600px){
- .panel{top:auto;bottom:0;height:88%;width:100%;border-radius:20px 20px 0 0;transform:translateY(105%)}
- .two{grid-template-columns:minmax(0,1fr)}.bar{width:120px}.stage{border-radius:14px}
- .hs .pin circle.r{r:26}.hs .pin text{font-size:26px}}
+.hs:hover .obj,.hs:focus-visible .obj{filter:brightness(1.05) drop-shadow(0 0 12px #1d6b7066)}
+.pin circle{fill:#1d6b70;stroke:#fff;stroke-width:3}
+.pin text{fill:#fff;font:600 17px "IBM Plex Sans",sans-serif;text-anchor:middle;dominant-baseline:central}
+.pin .pl rect{fill:#fff;stroke:#dde3e3}
+.pin .pl text{fill:#1b2629;font:500 15px "IBM Plex Sans",sans-serif;text-anchor:start}
+.hs.done .pin circle{fill:#fff;stroke:#1d6b70}.hs.done .pin>text{fill:#1d6b70}
+.hs:focus-visible .pin circle{stroke:#e8a33d;stroke-width:5}
+.halo{fill:#1d6b70;opacity:.3;transform-box:fill-box;transform-origin:center;animation:p 2.4s infinite}
+.hs.done .halo{display:none}
+@keyframes p{0%{transform:scale(1);opacity:.35}100%{transform:scale(2);opacity:0}}
+.dock{position:fixed;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(1000px,calc(100% - 24px));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 40px -20px #0007;z-index:7}
+.chip{min-height:52px;display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:11px;border:1px solid transparent;background:transparent;color:var(--ink);font:500 14.5px/1.2 "IBM Plex Sans",sans-serif;text-align:left;cursor:pointer}
+.chip:hover{background:var(--acc-bg)}
+.chip .n{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--acc);color:var(--acc);font-size:13.5px;font-weight:600}
+.chip.done .n{background:var(--acc);color:#fff}
+.chip.on{border-color:var(--acc);background:var(--acc-bg)}
+.chip:focus-visible,.x:focus-visible,.btn:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.scrim{position:fixed;inset:0;background:#0005;opacity:0;pointer-events:none;transition:opacity .25s;z-index:5}
+.panel{position:fixed;top:16px;right:16px;bottom:96px;width:min(500px,calc(100% - 32px));background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 60px -24px #0008;overflow-y:auto;transform:translateX(calc(100% + 40px));transition:transform .35s ease;z-index:6}
+.open .panel{transform:none}.open .scrim{opacity:1;pointer-events:auto}
+.grab{display:none}.swipe{display:none;text-align:center;font-size:13px;color:var(--soft);margin:8px 0 0}
+.ph{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);padding:20px 22px 16px;display:flex;gap:14px;justify-content:space-between;align-items:start}
+.ph small{display:block;color:var(--acc);font-weight:500;font-size:13.5px;margin-bottom:4px}
+.ph h2{font-size:clamp(22px,2.6vw,28px)}
+.x{flex:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:22px;cursor:pointer}
+.pb{padding:20px 22px 26px}
+.pb p{margin:0 0 14px}.pb h3{font-size:17px;margin:20px 0 6px}.pb ul{margin:0 0 14px;padding-left:20px}.pb li{margin:4px 0}
+.pb a{color:var(--acc)}
+.free{min-height:46vh;border:2px dashed var(--line);border-radius:14px;display:grid;place-items:center;text-align:center;padding:24px;color:var(--soft)}
+.free b{display:block;color:var(--ink);font-weight:500;margin-bottom:4px}
+.free small{font-size:13.5px}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:22px}
+.btn{flex:1;min-height:46px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 15px "IBM Plex Sans",sans-serif;cursor:pointer}
+.btn.f{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn[hidden]{display:none}
+@media(max-width:700px){
+ body{padding-bottom:110px}
+ .stage{overflow-x:auto;padding:0;scrollbar-width:none;-webkit-overflow-scrolling:touch}.stage::-webkit-scrollbar{display:none}
+ .stage svg{width:860px;max-width:none;border-radius:0;box-shadow:none}
+ .pin .pl{display:none}.pin{transform:scale(1.5);transform-box:fill-box;transform-origin:center}
+ .swipe{display:block}
+ .dock{gap:2px;padding:5px;grid-template-columns:repeat(5,minmax(0,1fr))}
+ .chip{flex-direction:column;justify-content:center;gap:4px;padding:6px 2px;min-height:64px;font-size:12.5px;text-align:center;hyphens:auto;overflow-wrap:anywhere}
+ .panel{top:auto;left:0;right:0;bottom:0;width:100%;height:80%;border-radius:20px 20px 0 0;border-bottom:0;transform:translateY(105%);padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+ .grab{display:block;width:40px;height:5px;border-radius:5px;background:var(--line);margin:8px auto 0}
+ .ph{padding:10px 16px 12px}.ph h2{font-size:21px}.pb{padding:16px 16px 26px}.free{min-height:34vh}}
+@media(prefers-reduced-motion:reduce){.halo{animation:none}.panel,.scrim,.bar i{transition:none}}
 </style>
 </head>
 <body>
-<header class="band"><div class="wrap">
- <div><h1>KI in der Pflege: ein Rundgang durch die Station</h1>
- <p>Klicke auf die nummerierten Punkte im Raum. Jede Station zeigt, wo künstliche Intelligenz im Pflegealltag schon hilft, wo ihre Grenzen liegen und welche Fragen du dir dazu stellen kannst. Am Ausgang wartet ein kurzer Wissenscheck.</p></div>
- <div class="prog" aria-live="polite"><span id="pc">0 von 7 besucht</span><span class="bar"><i id="pbar"></i></span></div>
-</div></header>
+<header>
+ <div>
+  <h1>KI in der Pflege</h1>
+  <p class="fq"><b>Forschungsfrage:</b> Wie weit darf die KI in der Pflege menschliche Aufgaben ersetzen, um den Fachkräftemangel auszugleichen, ohne Würde, Autonomie und menschliche Zuwendung zu gefährden?</p>
+ </div>
+ <div class="prog" aria-live="polite"><span id="pc">0 von 5</span><span class="bar"><i id="pbar"></i></span></div>
+</header>
 
-<main>
-<div class="stage" style="margin-inline:max(5vw,16px)">
-<svg viewBox="0 0 1000 600" role="img" aria-label="Gezeichnete Pflegestation mit klickbaren Stationen">
+<main class="stage">
+<svg viewBox="0 0 1200 680" role="img" aria-label="Gezeichnetes Pflegezimmer mit fünf anklickbaren Themen">
  <defs>
-  <linearGradient id="lw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--wall)"/><stop offset="1" stop-color="var(--wall2)"/></linearGradient>
-  <linearGradient id="lf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--floor)"/><stop offset="1" stop-color="var(--floor2)"/></linearGradient>
-  <linearGradient id="win" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfe6ee"/><stop offset="1" stop-color="#7fc4d4"/></linearGradient>
+  <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f3ee"/><stop offset="1" stop-color="#e9e7e0"/></linearGradient>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9c4a3"/><stop offset="1" stop-color="#c8ab83"/></linearGradient>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bcd9e6"/><stop offset=".7" stop-color="#e3eef1"/><stop offset=".71" stop-color="#a9bfa6"/><stop offset="1" stop-color="#8fa98c"/></linearGradient>
+  <filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity=".14"/></filter>
  </defs>
- <rect width="1000" height="430" fill="url(#lw)"/>
- <path d="M0 430H1000V600H0Z" fill="url(#lf)"/>
- <g stroke="#0000001a" stroke-width="2"><path d="M0 470H1000M0 520H1000M0 575H1000"/><path d="M120 430 60 600M300 430 270 600M500 430V600M700 430 730 600M880 430 940 600"/></g>
- <rect y="418" width="1000" height="14" fill="var(--teal2)" opacity=".5"/>
+ <rect width="1200" height="500" fill="url(#wall)"/>
+ <rect y="340" width="1200" height="150" fill="#dfe8e6"/>
+ <rect y="336" width="1200" height="6" fill="#c3cecc"/>
+ <path d="M0 490H1200V680H0Z" fill="url(#floor)"/>
+ <g stroke="#00000014" stroke-width="2"><path d="M0 530H1200M0 580H1200M0 635H1200"/><path d="M150 490 110 680M360 490 340 680M600 490V680M840 490 860 680M1050 490 1090 680"/></g>
+ <rect y="484" width="1200" height="10" fill="#bcc5c4"/>
+
  <!-- Fenster -->
- <g><rect x="380" y="60" width="240" height="190" rx="10" fill="#fff"/><rect x="392" y="72" width="216" height="166" rx="6" fill="url(#win)"/>
-  <circle cx="560" cy="110" r="22" fill="#ffe7a8"/><path d="M392 210q60-40 110-10t106-6v44H392Z" fill="#8fbf9a"/><path d="M500 72v166M392 155h216" stroke="#fff" stroke-width="8"/></g>
+ <g><rect x="520" y="70" width="250" height="190" rx="6" fill="#fff" filter="url(#sh)"/><rect x="532" y="82" width="226" height="166" rx="3" fill="url(#sky)"/>
+  <g fill="#9fb2b8"><rect x="560" y="150" width="34" height="56"/><rect x="606" y="140" width="28" height="66"/><rect x="690" y="156" width="40" height="50"/></g>
+  <path d="M645 82v166M532 165h226" stroke="#fff" stroke-width="7"/><rect x="510" y="258" width="270" height="12" rx="3" fill="#fff"/></g>
 
- <!-- 3 Monitor / Frühwarnung -->
- <g class="hs" data-i="2" tabindex="0" role="button" aria-label="Station 3: Frühwarnsysteme">
-  <g class="obj"><rect x="660" y="120" width="12" height="190" fill="#8a9a99"/><rect x="620" y="110" width="140" height="96" rx="10" fill="#1b2b2e"/>
-  <rect x="630" y="120" width="120" height="76" rx="5" fill="#0e3a3a"/><path d="M636 160h20l8-22 10 40 8-30 6 12h56" fill="none" stroke="#5ff2b5" stroke-width="3"/>
-  <text x="742" y="134" fill="#ffd36b" font-size="13" text-anchor="end" font-family="Sora">98%</text></g>
-  <g class="pin"><circle class="halo" cx="760" cy="104" r="22"/><circle class="r" cx="760" cy="104" r="22"/><text x="760" y="104">3</text></g></g>
+ <!-- 1 Ausgangslage: Whiteboard -->
+ <g class="hs" data-i="0" tabindex="0" role="button" aria-label="Thema 1: Ausgangslage">
+  <g class="obj" filter="url(#sh)"><rect x="60" y="90" width="300" height="190" rx="6" fill="#b9c2c3"/><rect x="70" y="100" width="280" height="170" rx="3" fill="#fbfcfc"/>
+   <rect x="86" y="116" width="120" height="12" rx="3" fill="#1b2629"/>
+   <text x="86" y="172" fill="#1d6b70" font-family="IBM Plex Sans" font-weight="600" font-size="34">2,15 Mio.</text>
+   <rect x="86" y="184" width="90" height="7" rx="3" fill="#9fb0b2"/>
+   <g fill="#1d6b70"><rect x="230" y="200" width="22" height="50"/><rect x="262" y="214" width="22" height="36" opacity=".7"/><rect x="294" y="226" width="22" height="24" opacity=".4"/></g>
+   <rect x="86" y="214" width="110" height="6" rx="3" fill="#c9d2d3"/><rect x="86" y="230" width="90" height="6" rx="3" fill="#c9d2d3"/><rect x="86" y="246" width="120" height="6" rx="3" fill="#c9d2d3"/>
+   <rect x="120" y="270" width="180" height="8" rx="3" fill="#9aa5a8"/></g>
+  <g class="pin"><circle class="halo" cx="352" cy="96" r="18"/><circle cx="352" cy="96" r="18"/><text x="352" y="96">1</text>
+   <g class="pl"><rect x="376" y="80" width="128" height="32" rx="16"/><text x="392" y="97">Ausgangslage</text></g></g></g>
 
- <!-- 2 Bett / Sensorik -->
- <g class="hs" data-i="1" tabindex="0" role="button" aria-label="Station 2: Sensorik und Sturzprävention">
-  <g class="obj"><rect x="420" y="300" width="20" height="170" rx="6" fill="#9aa8a7"/><rect x="760" y="360" width="16" height="110" rx="6" fill="#9aa8a7"/>
-  <rect x="430" y="350" width="340" height="60" rx="14" fill="#d7e4e3"/><rect x="430" y="330" width="340" height="40" rx="16" fill="#fff"/>
-  <rect x="450" y="318" width="90" height="34" rx="16" fill="#f4f7f7"/><path d="M540 336q100-18 230 6v28H540Z" fill="var(--teal)"/>
-  <rect x="430" y="404" width="340" height="12" rx="6" fill="#ffd36b" opacity=".9"/>
-  <g fill="#ffd36b"><circle cx="470" cy="470" r="6"/><circle cx="740" cy="470" r="6"/></g>
-  <path d="M445 445h320" stroke="#ffd36b" stroke-width="4" stroke-dasharray="4 10" opacity=".8"/></g>
-  <g class="pin"><circle class="halo" cx="600" cy="300" r="22"/><circle class="r" cx="600" cy="300" r="22"/><text x="600" y="300">2</text></g></g>
+ <!-- 5 Philosophisch: Bild -->
+ <g class="hs" data-i="4" tabindex="0" role="button" aria-label="Thema 5: Philosophisch gesehen">
+  <g class="obj" filter="url(#sh)"><rect x="830" y="100" width="170" height="124" rx="4" fill="#2f3a3e"/><rect x="840" y="110" width="150" height="104" fill="#f7f4ee"/>
+   <text x="915" y="148" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#1b2629">„zugleich als Zweck,</text>
+   <text x="915" y="167" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="14" fill="#1b2629">niemals bloß als Mittel“</text>
+   <rect x="895" y="180" width="40" height="2" fill="#1d6b70"/><text x="915" y="200" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#566468">Immanuel Kant</text></g>
+  <g class="pin"><circle class="halo" cx="1000" cy="104" r="18"/><circle cx="1000" cy="104" r="18"/><text x="1000" y="104">5</text>
+   <g class="pl"><rect x="1024" y="88" width="160" height="32" rx="16"/><text x="1040" y="105">Philosophisch</text></g></g></g>
 
- <!-- 6 Pinnwand / Planung -->
- <g class="hs" data-i="5" tabindex="0" role="button" aria-label="Station 6: Dienst- und Tourenplanung">
-  <g class="obj"><rect x="60" y="70" width="250" height="160" rx="10" fill="#b98a5f"/><rect x="70" y="80" width="230" height="140" rx="6" fill="#e9d2b1"/>
-  <g font-family="Sora" font-size="11" fill="#18302f"><text x="84" y="100">Mo</text><text x="130" y="100">Di</text><text x="176" y="100">Mi</text><text x="222" y="100">Do</text><text x="266" y="100">Fr</text></g>
-  <g><rect x="80" y="110" width="36" height="22" rx="3" fill="#ffe27a"/><rect x="126" y="110" width="36" height="22" rx="3" fill="#9fe0d9"/><rect x="172" y="110" width="36" height="22" rx="3" fill="#ffb4a1"/><rect x="218" y="110" width="36" height="22" rx="3" fill="#9fe0d9"/><rect x="262" y="110" width="30" height="22" rx="3" fill="#ffe27a"/>
-  <rect x="80" y="142" width="36" height="22" rx="3" fill="#9fe0d9"/><rect x="172" y="142" width="36" height="22" rx="3" fill="#ffe27a"/><rect x="262" y="142" width="30" height="22" rx="3" fill="#ffb4a1"/>
-  <path d="M90 196c30-24 60 16 90-6s60 10 100-10" fill="none" stroke="var(--coral)" stroke-width="3" stroke-dasharray="6 5"/><circle cx="90" cy="196" r="5" fill="var(--coral)"/><circle cx="280" cy="180" r="5" fill="var(--coral)"/></g></g>
-  <g class="pin"><circle class="halo" cx="300" cy="70" r="22"/><circle class="r" cx="300" cy="70" r="22"/><text x="300" y="70">6</text></g></g>
+ <!-- 4 Recht: Bücherregal -->
+ <g class="hs" data-i="3" tabindex="0" role="button" aria-label="Thema 4: Rechtliche Rahmenbedingungen">
+  <g class="obj" filter="url(#sh)"><rect x="960" y="290" width="200" height="260" rx="4" fill="#8a6a4c"/><rect x="972" y="302" width="176" height="236" fill="#6e5239"/>
+   <g fill="#8a6a4c"><rect x="972" y="358" width="176" height="7"/><rect x="972" y="420" width="176" height="7"/><rect x="972" y="482" width="176" height="7"/></g>
+   <g id="books"><rect x="978" y="314" width="12" height="44" fill="#4f6a6e"/><rect x="992" y="318" width="10" height="40" fill="#c9b48f"/><rect x="1004" y="312" width="14" height="46" fill="#7d8f93"/><rect x="1020" y="320" width="9" height="38" fill="#9c5f4a"/><rect x="1031" y="314" width="13" height="44" fill="#d8d2c4"/><rect x="1046" y="318" width="11" height="40" fill="#2f4447"/><rect x="1059" y="312" width="14" height="46" fill="#6f8f92"/><rect x="1075" y="320" width="10" height="38" fill="#c9b48f"/><rect x="1087" y="314" width="12" height="44" fill="#4f6a6e"/><path d="M1104 358l10-42 11 2-10 42Z" fill="#d8d2c4"/></g>
+   <use href="#books" y="62"/><use href="#books" y="124" x="6"/><rect x="980" y="496" width="70" height="36" fill="#f4f3ee"/><rect x="988" y="506" width="50" height="4" fill="#9aa5a8"/><rect x="988" y="516" width="36" height="4" fill="#9aa5a8"/>
+   <path d="M1090 500h30v16q0 14-15 22q-15-8-15-22Z" fill="#c9b48f"/></g>
+  <g class="pin"><circle class="halo" cx="1060" cy="282" r="18"/><circle cx="1060" cy="282" r="18"/><text x="1060" y="282">4</text>
+   <g class="pl"><rect x="926" y="234" width="248" height="32" rx="16"/><text x="942" y="251">Rechtliche Rahmenbedingungen</text></g></g></g>
 
- <!-- 1 Schreibtisch / Dokumentation -->
- <g class="hs" data-i="0" tabindex="0" role="button" aria-label="Station 1: Pflegedokumentation">
-  <g class="obj"><rect x="40" y="330" width="260" height="18" rx="5" fill="#8b5e3c"/><rect x="56" y="348" width="14" height="140" fill="#6f4a2f"/><rect x="270" y="348" width="14" height="140" fill="#6f4a2f"/>
-  <path d="M90 328l14-74h120l-6 74Z" fill="#2c3b3e"/><path d="M100 320l12-58h104l-6 58Z" fill="#cfe9ef"/>
-  <g stroke="var(--teal)" stroke-width="4" stroke-linecap="round"><path d="M122 280h70M120 294h80M118 308h50"/></g>
-  <rect x="76" y="326" width="170" height="6" rx="3" fill="#596b6e"/>
-  <rect x="254" y="294" width="12" height="34" rx="6" fill="#596b6e"/><path d="M260 290v-14" stroke="#596b6e" stroke-width="3"/>
-  <path d="M242 284q-6-14 0-28M278 284q6-14 0-28" fill="none" stroke="var(--coral)" stroke-width="3" stroke-linecap="round"/></g>
-  <g class="pin"><circle class="halo" cx="160" cy="236" r="22"/><circle class="r" cx="160" cy="236" r="22"/><text x="160" y="236">1</text></g></g>
+ <!-- 2 KI heute: Schreibtisch + Bett mit Sensor -->
+ <g class="hs" data-i="1" tabindex="0" role="button" aria-label="Thema 2: Was KI schon übernehmen kann">
+  <g class="obj">
+   <g filter="url(#sh)"><rect x="60" y="420" width="290" height="16" rx="4" fill="#e6e1d8"/><rect x="74" y="436" width="10" height="150" fill="#59636a"/><rect x="326" y="436" width="10" height="150" fill="#59636a"/>
+    <path d="M120 418l14-92h130l-8 92Z" fill="#2c3b3e"/><path d="M130 410l12-76h112l-7 76Z" fill="#f7f9f9"/><rect x="142" y="340" width="112" height="12" fill="#1d6b70"/>
+    <g fill="#c9d2d3"><rect x="148" y="362" width="80" height="6" rx="3"/><rect x="146" y="376" width="96" height="6" rx="3"/><rect x="144" y="390" width="64" height="6" rx="3"/></g>
+    <rect x="104" y="414" width="180" height="6" rx="3" fill="#596b6e"/><rect x="296" y="380" width="10" height="34" rx="5" fill="#596b6e"/><path d="M301 380v-12" stroke="#596b6e" stroke-width="3"/>
+    <path d="M286 372q-6-12 0-24M316 372q6-12 0-24" fill="none" stroke="#1d6b70" stroke-width="3" stroke-linecap="round"/>
+    <path d="M360 470h70v14h-70zM392 484h6v80h-6zM366 570h60v6h-60z" fill="#3e4a4f"/><rect x="418" y="380" width="12" height="94" rx="4" fill="#3e4a4f"/></g>
+  </g>
+  <g class="pin"><circle class="halo" cx="200" cy="314" r="18"/><circle cx="200" cy="314" r="18"/><text x="200" y="314">2</text>
+   <g class="pl"><rect x="224" y="298" width="240" height="32" rx="16"/><text x="240" y="315">Was KI schon übernehmen kann</text></g></g></g>
 
- <!-- 4 Medikamentenschrank -->
- <g class="hs" data-i="3" tabindex="0" role="button" aria-label="Station 4: Medikation">
-  <g class="obj"><rect x="830" y="150" width="140" height="290" rx="10" fill="#e9eeee"/><rect x="842" y="164" width="116" height="262" rx="6" fill="#cfdcdc"/>
-  <g fill="#fff"><rect x="850" y="176" width="100" height="70" rx="4"/><rect x="850" y="256" width="100" height="70" rx="4"/><rect x="850" y="336" width="100" height="80" rx="4"/></g>
-  <g><rect x="860" y="200" width="18" height="40" rx="4" fill="#ffb4a1"/><rect x="884" y="210" width="18" height="30" rx="4" fill="#9fe0d9"/><rect x="908" y="196" width="18" height="44" rx="4" fill="#ffe27a"/>
-  <rect x="862" y="290" width="76" height="22" rx="4" fill="#9fe0d9"/><circle cx="900" cy="372" r="16" fill="var(--teal)"/><path d="M893 372h14M900 365v14" stroke="#fff" stroke-width="4"/></g></g>
-  <g class="pin"><circle class="halo" cx="900" cy="140" r="22"/><circle class="r" cx="900" cy="140" r="22"/><text x="900" y="140">4</text></g></g>
+ <!-- Bett mit Sensor (gehört zu 2) -->
+ <g class="hs" data-i="1" tabindex="-1" aria-hidden="true">
+  <g class="obj" filter="url(#sh)"><rect x="500" y="360" width="20" height="200" rx="5" fill="#c6cfd1"/><rect x="820" y="410" width="16" height="150" rx="5" fill="#c6cfd1"/>
+   <rect x="506" y="440" width="320" height="56" rx="12" fill="#d7e4e3"/><rect x="506" y="418" width="320" height="34" rx="14" fill="#fff"/>
+   <rect x="526" y="402" width="88" height="30" rx="14" fill="#f4f7f7"/><path d="M610 420q100-14 216 4v26H610Z" fill="#6f8f92"/>
+   <rect x="506" y="492" width="320" height="8" rx="4" fill="#2aa6a0"/><circle cx="540" cy="566" r="9" fill="#2b3236"/><circle cx="800" cy="566" r="9" fill="#2b3236"/>
+   <path d="M620 390v-20" stroke="#9aa5a8" stroke-width="3"/></g></g>
 
- <!-- 5 Roboter -->
- <g class="hs" data-i="4" tabindex="0" role="button" aria-label="Station 5: Robotik">
-  <g class="obj"><ellipse cx="350" cy="560" rx="62" ry="10" fill="#0003"/><rect x="304" y="470" width="92" height="86" rx="22" fill="#f4f7f7"/><rect x="314" y="484" width="72" height="30" rx="8" fill="var(--teal)"/>
-  <rect x="318" y="420" width="64" height="52" rx="18" fill="#fff"/><rect x="326" y="432" width="48" height="26" rx="10" fill="#1b2b2e"/>
-  <circle cx="340" cy="445" r="5" fill="#5ff2b5"/><circle cx="360" cy="445" r="5" fill="#5ff2b5"/><path d="M350 420v-14" stroke="#9aa8a7" stroke-width="4"/><circle cx="350" cy="402" r="6" fill="var(--coral)"/>
-  <rect x="320" y="522" width="60" height="26" rx="6" fill="#ffd36b"/></g>
-  <g class="pin"><circle class="halo" cx="410" cy="420" r="22"/><circle class="r" cx="410" cy="420" r="22"/><text x="410" y="420">5</text></g></g>
+ <!-- 3 Zukunft: Roboter + Monitor -->
+ <g class="hs" data-i="2" tabindex="0" role="button" aria-label="Thema 3: Was KI in Zukunft übernehmen kann und was nicht">
+  <g class="obj" filter="url(#sh)">
+   <rect x="866" y="250" width="6" height="300" fill="#9aa5a8"/><rect x="836" y="236" width="70" height="50" rx="5" fill="#2b3236"/><rect x="842" y="242" width="58" height="38" rx="3" fill="#071a1c"/>
+   <path d="M846 262h10l4-10 5 20 4-14 3 6h22" fill="none" stroke="#4fe3a3" stroke-width="2"/><path d="M846 548h50" stroke="#9aa5a8" stroke-width="6" stroke-linecap="round"/>
+   <ellipse cx="760" cy="640" rx="54" ry="8" fill="#0002"/><rect x="718" y="540" width="84" height="96" rx="22" fill="#f2f4f4"/><rect x="718" y="618" width="84" height="20" rx="8" fill="#2e3a3f"/><rect x="718" y="612" width="84" height="5" fill="#2aa6a0"/>
+   <rect x="730" y="556" width="60" height="16" rx="4" fill="#cfd6d7"/><rect x="754" y="504" width="12" height="36" fill="#9aa5a8"/>
+   <rect x="722" y="468" width="76" height="44" rx="6" fill="#2e3a3f"/><rect x="727" y="473" width="66" height="34" rx="3" fill="#0e2326"/><rect x="733" y="481" width="40" height="5" rx="2" fill="#4fb3b5"/><rect x="733" y="492" width="28" height="5" rx="2" fill="#9fb0b2"/></g>
+  <g class="pin"><circle class="halo" cx="808" cy="460" r="18"/><circle cx="808" cy="460" r="18"/><text x="808" y="460">3</text>
+   <g class="pl"><rect x="560" y="444" width="224" height="32" rx="16"/><text x="576" y="461">KI in Zukunft – und was nicht</text></g></g></g>
 
- <!-- 7 Regal / Ethik -->
- <g class="hs" data-i="6" tabindex="0" role="button" aria-label="Station 7: Ethik, Recht und Datenschutz">
-  <g class="obj"><rect x="840" y="460" width="140" height="120" rx="8" fill="#8b5e3c"/><rect x="848" y="468" width="124" height="104" rx="4" fill="#6f4a2f"/>
-  <g><rect x="856" y="478" width="16" height="40" fill="var(--teal)"/><rect x="874" y="482" width="12" height="36" fill="#ffd36b"/><rect x="888" y="476" width="18" height="42" fill="var(--coral)"/><rect x="908" y="484" width="14" height="34" fill="#9fe0d9"/><path d="M926 518l10-38 12 3-10 38Z" fill="#fff"/>
-  <rect x="856" y="526" width="56" height="38" rx="3" fill="#fff"/><path d="M864 540h40M864 552h28" stroke="#9aa8a7" stroke-width="3"/><path d="M936 532l20 0v14q0 12-10 18q-10-6-10-18Z" fill="#ffd36b"/></g></g>
-  <g class="pin"><circle class="halo" cx="910" cy="452" r="22"/><circle class="r" cx="910" cy="452" r="22"/><text x="910" y="452">7</text></g></g>
-
- <!-- Ausgang / Quiz -->
- <g class="hs" data-i="7" tabindex="0" role="button" aria-label="Ausgang: Wissenscheck">
-  <g class="obj"><rect x="500" y="500" width="160" height="56" rx="28" fill="var(--teal2)"/><text x="580" y="529" fill="#fff" font-family="Sora" font-weight="700" font-size="19" text-anchor="middle" dominant-baseline="central">Wissenscheck</text></g>
-  <g class="pin"><circle class="halo" cx="672" cy="500" r="22"/><circle class="r" cx="672" cy="500" r="22"/><text x="672" y="500">?</text></g></g>
+ <!-- Pflanze -->
+ <g filter="url(#sh)"><path d="M440 640h44l-6 38h-32Z" fill="#e4ded4"/><g fill="#6f8f6a"><ellipse cx="450" cy="610" rx="16" ry="34" transform="rotate(-20 450 610)"/><ellipse cx="474" cy="606" rx="15" ry="36" transform="rotate(18 474 606)"/><ellipse cx="462" cy="598" rx="12" ry="40"/></g></g>
 </svg>
-</div>
-<p class="hint" style="padding-inline:max(5vw,16px)">Lieber eine Liste? Alle Stationen findest du auch hier:</p>
-<ul class="list" id="list" style="padding-inline:max(5vw,16px)"></ul>
 </main>
+<p class="swipe">Seitlich wischen, um den ganzen Raum zu sehen</p>
 
-<footer class="band">Lernraum zur Orientierung, kein Ersatz für Fachfortbildung, rechtliche oder medizinische Beratung. Beispiele sind typische Einsatzfelder, keine Produktempfehlungen.</footer>
+<nav class="dock" id="dock" aria-label="Themen"></nav>
 
 <div class="scrim" id="scrim"></div>
 <aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="pt">
+ <div class="grab" aria-hidden="true"></div>
  <div class="ph"><div><small id="pk"></small><h2 id="pt"></h2></div><button class="x" id="x" aria-label="Schließen">×</button></div>
- <div class="pb" id="pbody"></div>
+ <div class="pb"><div id="ptext"></div>
+  <div class="nav"><button class="btn" id="prev">Vorheriges Thema</button><button class="btn f" id="next">Nächstes Thema</button></div></div>
 </aside>
 
 <script>
 {
-const S=[
-{t:"Pflegedokumentation",k:"Station 1 · Schreibtisch",
- p:"Dokumentation frisst einen großen Teil der Arbeitszeit. KI-Systeme können gesprochene Notizen in Text umwandeln, Einträge strukturieren und Übergaben vorbereiten.",
- e:["Spracherkennung: Die Pflegekraft diktiert, das System schreibt mit und ordnet den Text der passenden Kategorie zu.","Zusammenfassungen für die Schichtübergabe aus den Einträgen der letzten 24 Stunden.","Hinweise auf fehlende Pflichtangaben, etwa eine nicht dokumentierte Schmerzeinschätzung."],
- c:["Mehr Zeit am Menschen","Einheitlichere, vollständigere Einträge","Entlastung bei Sprachbarrieren"],
- r:["KI kann Inhalte falsch oder erfunden wiedergeben","Verantwortung für den Eintrag bleibt bei der Pflegefachperson","Datenschutz bei Cloud-Diensten"],
- q:"Wie würdest du prüfen, ob eine automatisch erstellte Übergabe stimmt?"},
-{t:"Sensorik & Sturzprävention",k:"Station 2 · Patientenbett",
- p:"Sensoren in Matratze, Boden oder an der Decke erfassen Bewegungen. Lernende Algorithmen erkennen Muster, etwa wenn jemand nachts unruhig wird und aufstehen will.",
- e:["Sensormatten und Radarsensoren melden ein Aufstehen, bevor ein Sturz passiert.","Druckverteilung im Liegen hilft, das Dekubitusrisiko einzuschätzen und an Lagerungswechsel zu erinnern.","Auswertung von Schlaf- und Aktivitätsmustern über mehrere Tage."],
- c:["Stürze früher verhindern","Weniger nächtliche Kontrollgänge, mehr Ruhe für Bewohnerinnen","Objektive Verlaufsdaten"],
- r:["Fehlalarme führen zu Alarmmüdigkeit","Gefühl, überwacht zu werden","Einwilligung bei kognitiv eingeschränkten Menschen ist heikel"],
- q:"Wann wird Schutz zur Überwachung, und wer entscheidet das?"},
-{t:"Frühwarnsysteme",k:"Station 3 · Monitor",
- p:"KI wertet Vitalwerte, Laborwerte und Dokumentation laufend aus und schlägt Alarm, wenn sich der Zustand eines Menschen verschlechtern könnte, oft Stunden bevor es offensichtlich wird.",
- e:["Früherkennung von Sepsis oder Delir aus Kombinationen vieler Werte.","Automatische Berechnung von Frühwarnscores aus Puls, Atmung, Blutdruck, Temperatur und Bewusstsein.","Priorisierung: Welche Patientin sollte zuerst angesehen werden?"],
- c:["Verschlechterungen früher erkennen","Unterstützung bei hoher Arbeitslast","Gemeinsame Sprache mit dem ärztlichen Dienst"],
- r:["Systeme lernen aus alten Daten und können bestimmte Gruppen benachteiligen","Klinischer Blick darf nicht verkümmern","Zu viele Warnungen werden ignoriert"],
- q:"Was tust du, wenn dein Bauchgefühl und der Score sich widersprechen?"},
-{t:"Medikation",k:"Station 4 · Medikamentenschrank",
- p:"Bei vielen Medikamenten gleichzeitig steigt das Risiko für Fehler und Wechselwirkungen. Digitale Assistenten prüfen Verordnungen und unterstützen beim Richten.",
- e:["Automatische Prüfung auf Wechselwirkungen, Doppelverordnungen und Allergien.","Plausibilitätscheck von Dosierungen, etwa bei eingeschränkter Nierenfunktion.","Scannen von Medikament und Armband vor der Gabe."],
- c:["Weniger Medikationsfehler","Sicherheit bei Polypharmazie","Entlastung beim Stellen"],
- r:["Zu viele unwichtige Warnungen werden weggeklickt","Abhängigkeit von gepflegten Stammdaten","Technik ersetzt nicht das Vier-Augen-Prinzip"],
- q:"Welche Warnung würdest du nie ungeprüft wegklicken?"},
-{t:"Robotik & Assistenz",k:"Station 5 · Roboter",
- p:"Roboter in der Pflege sind meist keine Menschenkopien, sondern spezialisierte Helfer. KI steuert ihre Navigation, Spracherkennung oder Reaktion auf Berührung.",
- e:["Transportroboter bringen Wäsche, Essen oder Material und sparen Wege.","Soziale Roboter, etwa die Therapierobbe Paro, werden in der Betreuung von Menschen mit Demenz eingesetzt.","Hebehilfen und Exoskelette entlasten den Rücken beim Transfer."],
- c:["Körperliche Entlastung","Mehr Zeit für Beziehungsarbeit","Aktivierung und Gesprächsanlass"],
- r:["Darf menschliche Zuwendung nicht ersetzen","Hohe Kosten und Wartungsaufwand","Akzeptanz bei Team und Bewohnern"],
- q:"Welche Aufgaben sollten in der Pflege immer beim Menschen bleiben?"},
-{t:"Dienst- & Tourenplanung",k:"Station 6 · Pinnwand",
- p:"Algorithmen können Dienstpläne und Touren der ambulanten Pflege so berechnen, dass Qualifikationen, Wünsche, Fahrzeiten und gesetzliche Ruhezeiten zusammenpassen.",
- e:["Tourenoptimierung: kürzere Fahrwege, realistische Zeitfenster pro Einsatz.","Dienstplanvorschläge, die Wunschfrei und Fairness berücksichtigen.","Prognose von Personalbedarf, zum Beispiel in der Grippesaison."],
- c:["Fairere, transparentere Pläne","Weniger Überstunden und Leerlauf","Schnelleres Reagieren bei Ausfällen"],
- r:["Optimierung auf Effizienz kann Pflegezeit pro Person drücken","Nachvollziehbarkeit der Entscheidungen","Mitbestimmung von Beschäftigten"],
- q:"Wer sollte das letzte Wort beim Dienstplan haben?"},
-{t:"Ethik, Recht & Datenschutz",k:"Station 7 · Bücherregal",
- p:"Pflege arbeitet mit besonders sensiblen Daten und mit Menschen, die oft verletzlich sind. Deshalb gelten für KI hier hohe Anforderungen.",
- e:["Gesundheitsdaten gehören nach der DSGVO zu den besonders geschützten Datenkategorien.","Die europäische KI-Verordnung (AI Act) ordnet KI nach Risiko ein; KI in Medizinprodukten gilt in der Regel als Hochrisiko, mit Pflichten zu Transparenz, Qualität und menschlicher Aufsicht.","Menschen haben ein Recht zu erfahren, wenn KI an Entscheidungen über sie beteiligt ist."],
- c:["Klare Regeln schaffen Vertrauen","Pflege kann bei der Einführung mitgestalten","Ethische Fallbesprechungen bekommen neue Themen"],
- r:["Unklare Haftung bei Fehlern","Würde und Selbstbestimmung im Blick behalten","Digitale Kompetenz im Team muss wachsen"],
- q:"Wie erklärst du einer Bewohnerin verständlich, was ein KI-System über sie auswertet?"}
+/* =====================================================================
+   HIER EUREN TEXT EINTRAGEN
+   Bei "text" zwischen die beiden Backticks ` ` schreiben.
+   Einfache HTML-Tags gehen: <p>Absatz</p>, <h3>Zwischenüberschrift</h3>,
+   <ul><li>Punkt</li></ul>, <a href="https://...">Quelle</a>
+   Solange "text" leer ist, wird die freie Fläche angezeigt.
+   ===================================================================== */
+const THEMEN=[
+ {kurz:"Ausgangslage", titel:"Ausgangslage",
+  text:``},
+ {kurz:"KI heute", titel:"Was KI schon übernehmen kann",
+  text:``},
+ {kurz:"Zukunft", titel:"Was KI in Zukunft übernehmen kann – und was nicht",
+  text:``},
+ {kurz:"Recht", titel:"Rechtliche Rahmenbedingungen",
+  text:``},
+ {kurz:"Philosophie", titel:"Philosophisch gesehen",
+  text:``}
 ];
-const Q=[
-{q:"Wer trägt die Verantwortung für einen Dokumentationseintrag, den eine KI vorformuliert hat?",o:["Der Hersteller der Software","Die Pflegefachperson, die ihn übernimmt","Niemand, weil die KI ihn erstellt hat"],a:1,f:"Die KI liefert einen Vorschlag. Wer ihn freigibt, verantwortet ihn."},
-{q:"Was ist ein typisches Risiko von Sensor-Systemen zur Sturzerkennung?",o:["Alarmmüdigkeit durch Fehlalarme","Sie funktionieren nur tagsüber","Sie ersetzen die Pflegeplanung"],a:0,f:"Zu viele Fehlalarme führen dazu, dass Warnungen nicht mehr ernst genommen werden."},
-{q:"Warum können Frühwarnsysteme bestimmte Patientengruppen benachteiligen?",o:["Weil sie absichtlich so programmiert sind","Weil sie aus historischen Daten lernen, in denen Gruppen unterrepräsentiert sein können","Weil sie nur Vitalwerte nutzen"],a:1,f:"Verzerrungen in Trainingsdaten können sich in den Ergebnissen fortsetzen."},
-{q:"Wie stuft der EU AI Act KI in Medizinprodukten in der Regel ein?",o:["Als minimales Risiko","Als verboten","Als Hochrisiko-System"],a:2,f:"Hochrisiko bedeutet: strenge Anforderungen an Qualität, Transparenz und menschliche Aufsicht."},
-{q:"Welche Aussage zu sozialen Robotern wie der Robbe Paro passt am besten?",o:["Sie ersetzen Betreuungskräfte","Sie können Aktivierung und Gesprächsanlässe schaffen, ersetzen aber keine Zuwendung","Sie sind nur für Kinder gedacht"],a:1,f:"Sie sind ein Werkzeug in der Betreuung, kein Ersatz für Beziehung."}
-];
-const seen=new Set();let qi=0,pts=0;
-const $=id=>document.getElementById(id);
-const ul=a=>"<ul>"+a.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
-const L=[...S.map((s,i)=>({n:i+1,t:s.t})),{n:"?",t:"Wissenscheck"}];
-function list(){$("list").innerHTML=L.map((l,i)=>`<li><button data-i="${i}" class="${seen.has(i)?'done':''}"><b>${l.n}</b>${l.t}</button></li>`).join("");}
-function prog(){const n=[...seen].filter(i=>i<7).length;$("pc").textContent=n+" von 7 besucht";$("pbar").style.width=(n/7*100)+"%";
- document.querySelectorAll(".hs").forEach(h=>h.classList.toggle("done",seen.has(+h.dataset.i)));list();}
-let last=null;
-function open(i){last=document.activeElement;seen.add(i);prog();
- if(i===7){qi=0;pts=0;quiz();}else{const s=S[i];$("pk").textContent=s.k;$("pt").textContent=s.t;
- $("pbody").innerHTML=`<p>${s.p}</p><h3>So sieht das im Alltag aus</h3>${ul(s.e)}<div class="two"><div><h3>Chancen</h3>${ul(s.c)}</div><div><h3>Grenzen & Risiken</h3>${ul(s.r)}</div></div><p class="ask">Zum Nachdenken: ${s.q}</p>
- <div class="nav">${i>0?`<button class="btn" data-go="${i-1}">Zurück</button>`:"<span></span>"}<button class="btn f" data-go="${i+1}">${i<6?"Nächste Station":"Zum Wissenscheck"}</button></div>`;}
+/* ===================================================================== */
+
+const $=id=>document.getElementById(id);const seen=new Set();let cur=-1,last=null;const N=THEMEN.length;
+function dock(){$("dock").innerHTML=THEMEN.map((t,i)=>`<button class="chip${seen.has(i)?" done":""}${i===cur?" on":""}" data-i="${i}" aria-label="Thema ${i+1}: ${t.titel}"><span class="n">${i+1}</span><span>${t.kurz}</span></button>`).join("");}
+function prog(){$("pc").textContent=seen.size+" von "+N;$("pbar").style.width=seen.size/N*100+"%";
+ document.querySelectorAll(".hs").forEach(h=>h.classList.toggle("done",seen.has(+h.dataset.i)));dock();}
+function show(i){if(!document.body.classList.contains("open"))last=document.activeElement;cur=i;seen.add(i);prog();const t=THEMEN[i];
+ $("pk").textContent="Thema "+(i+1)+" von "+N;$("pt").textContent=t.titel;
+ $("ptext").innerHTML=t.text.trim()?t.text:`<div class="free"><div><b>Platz für euren Text</b><small>Inhalt folgt</small></div></div>`;
+ $("prev").hidden=i===0;$("next").textContent=i<N-1?"Nächstes Thema":"Zurück zum Raum";
  document.body.classList.add("open");$("panel").scrollTop=0;$("x").focus();}
-function close(){document.body.classList.remove("open");if(last&&last.focus)last.focus();}
-function quiz(){$("pk").textContent="Ausgang";$("pt").textContent="Wissenscheck";
- if(qi>=Q.length){$("pbody").innerHTML=`<p>Geschafft! Dein Ergebnis:</p><div class="score">${pts} / ${Q.length}</div><p>${pts===Q.length?"Sehr gut, du hast den Überblick.":"Schau dir die Stationen gern noch einmal an."} ${[...seen].filter(i=>i<7).length<7?"Du hast noch nicht alle Stationen besucht.":""}</p><div class="nav"><button class="btn" data-go="0">Rundgang neu starten</button><button class="btn f" id="again">Quiz wiederholen</button></div>`;return;}
- const c=Q[qi];$("pbody").innerHTML=`<p><b>Frage ${qi+1} von ${Q.length}</b></p><p>${c.q}</p>${c.o.map((o,j)=>`<button class="opt" data-o="${j}">${o}</button>`).join("")}<p class="fb" id="fb" aria-live="polite"></p><div class="nav"><span></span><button class="btn f" id="nq" hidden>${qi<Q.length-1?"Nächste Frage":"Ergebnis"}</button></div>`;}
-document.querySelectorAll(".hs").forEach(h=>{h.addEventListener("click",()=>open(+h.dataset.i));h.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open(+h.dataset.i);}});});
-$("list").addEventListener("click",e=>{const b=e.target.closest("button");if(b)open(+b.dataset.i);});
-$("x").onclick=close;$("scrim").onclick=close;
-document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
-$("pbody").addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){open(+g.dataset.go);return;}
- if(e.target.id==="again"){qi=0;pts=0;quiz();return;}
- if(e.target.id==="nq"){qi++;quiz();return;}
- const o=e.target.closest(".opt");if(!o||o.disabled)return;const c=Q[qi],j=+o.dataset.o;
- document.querySelectorAll(".opt").forEach((b,k)=>{b.disabled=true;if(k===c.a)b.classList.add("ok");});
- if(j===c.a){pts++;$("fb").textContent="Richtig. "+c.f;}else{o.classList.add("no");$("fb").textContent="Nicht ganz. "+c.f;}
- $("nq").hidden=false;$("nq").focus();});
+function hide(){document.body.classList.remove("open");cur=-1;dock();if(last&&last.focus)last.focus();}
+document.querySelectorAll(".hs").forEach(h=>{h.addEventListener("click",()=>show(+h.dataset.i));h.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();show(+h.dataset.i);}});});
+$("dock").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b)show(+b.dataset.i);});
+$("x").onclick=hide;$("scrim").onclick=hide;
+$("prev").onclick=()=>show(cur-1);$("next").onclick=()=>cur<N-1?show(cur+1):hide();
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hide();});
 prog();
+const st=document.querySelector(".stage");if(st.scrollWidth>st.clientWidth)st.scrollLeft=(st.scrollWidth-st.clientWidth)/2;
 }
 </script>
 </body>
