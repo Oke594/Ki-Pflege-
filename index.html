@@ -1121,85 +1121,109 @@ h1,h2,h3{font-weight:600;line-height:1.12;margin:0;text-wrap:balance}
 .fb{font-size:15px;color:var(--soft);min-height:24px}
 .score{font:600 clamp(40px,7vw,56px) "IBM Plex Sans",sans-serif;color:var(--acc);margin:4px 0 8px}
 .note{font-size:13px;color:var(--soft);margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
+.cite{margin:6px 0 4px;padding:14px 16px;border-left:3px solid var(--acc);background:var(--acc-bg);border-radius:0 12px 12px 0}.cite p{margin:0 0 6px;font-size:17px}.cite span{font-size:13.5px;color:var(--soft)}
+.law{margin:16px 0 0}.law dt{font-weight:600;color:var(--acc);font-size:14.5px}.law dd{margin:2px 0 12px}
+.src{font-size:14px}.src a{color:var(--acc)}
 .fallback{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:24px;color:var(--soft)}
 .nogl .fallback{display:grid}.nogl #c,.nogl .hint{display:none}
+.hm,.grab{display:none}
 @media(max-width:700px){
- .brand{padding:10px 14px;max-width:none;flex:1}.brand p{display:none}.top{right:16px}
- .lbl .t{display:none}.lbl{padding:4px}
- .panel{top:auto;left:0;right:0;bottom:0;width:100%;height:62%;border-radius:18px 18px 0 0;transform:translateY(105%)}
- .two{grid-template-columns:minmax(0,1fr)}.hint{bottom:84px;font-size:13px;white-space:normal;width:calc(100% - 48px);text-align:center;border-radius:12px}}
+ .top{top:max(10px,env(safe-area-inset-top));left:10px;right:10px;gap:8px}
+ .brand{padding:10px 14px;max-width:none;flex:1;border-radius:12px}.brand h1{font-size:18px}.brand p{display:none}.prog{font-size:13px;margin-top:6px}
+ .tb{min-height:44px;padding:0 12px;font-size:14px;border-radius:12px}
+ .lbl{padding:0}.lbl .t{display:none}.lbl .n{width:34px;height:34px;font-size:15px}
+ .dock{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));padding:6px;gap:4px;border-radius:14px}
+ .chip{padding:0 12px 0 6px;font-size:14px}
+ .open .dock,.open .hint{opacity:0;pointer-events:none}
+ .panel{top:auto;left:0;right:0;bottom:0;width:100%;height:58%;border-radius:20px 20px 0 0;border-bottom:0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom)}
+ .grab{display:block;width:40px;height:5px;border-radius:5px;background:var(--line);margin:8px auto 0}
+ .ph{padding:10px 16px 12px}.ph h2{font-size:20px}.ph small{font-size:12.5px}
+ .pb{padding:14px 16px 28px;font-size:16px}
+ .two{grid-template-columns:minmax(0,1fr)}
+ .nav .btn{flex:1}
+ .hint{bottom:78px;font-size:13px;white-space:normal;width:calc(100% - 40px);text-align:center;border-radius:12px}
+ .hd{display:none}.hm{display:inline}}
 @media(prefers-reduced-motion:reduce){.panel,.bar i,.hint{transition:none}}
 </style>
 </head>
 <body>
 <div id="app">
- <canvas id="c" aria-label="3D-Modell einer Pflegestation mit sieben Lernstationen"></canvas>
+ <canvas id="c" aria-label="3D-Modell einer Pflegestation mit neun Lernstationen"></canvas>
  <div id="labels"></div>
  <div class="fallback"><p>Die 3D-Ansicht konnte in diesem Browser nicht geladen werden.<br>Alle Inhalte sind über die Leiste unten erreichbar.</p></div>
  <div class="top">
-  <div class="brand"><h1>KI in der Pflege</h1><p>Virtuelle Station mit sieben Themenbereichen und einem abschließenden Wissenscheck.</p>
-   <div class="prog" aria-live="polite"><span id="pc">0 von 7</span><span class="bar"><i id="pbar"></i></span></div></div>
+  <div class="brand"><h1>KI in der Pflege</h1><p>Rundgang von der Ausgangslage über heutige Einsatzfelder bis zu Recht, Ethik und Fazit, mit abschließendem Wissenscheck.</p>
+   <div class="prog" aria-live="polite"><span id="pc">0 von 9</span><span class="bar"><i id="pbar"></i></span></div></div>
   <button class="tb" id="home">Übersicht</button>
  </div>
- <div class="hint" id="hint">Ziehen zum Drehen · Scrollen oder Pinch zum Zoomen · Station anklicken</div>
+ <div class="hint" id="hint"><span class="hd">Ziehen zum Drehen · Scrollen zum Zoomen · Station anklicken</span><span class="hm">Wischen zum Drehen · zwei Finger zum Zoomen · Nummer antippen</span></div>
  <nav class="dock" id="dock" aria-label="Stationen"></nav>
  <aside class="panel" id="panel" role="dialog" aria-labelledby="pt">
-  <div class="ph"><div><small id="pk"></small><h2 id="pt"></h2></div><button class="x" id="x" aria-label="Schließen">×</button></div>
+  <div class="grab" aria-hidden="true"></div><div class="ph"><div><small id="pk"></small><h2 id="pt"></h2></div><button class="x" id="x" aria-label="Schließen">×</button></div>
   <div class="pb" id="pbody"></div>
  </aside>
 </div>
 <script>
 {
 const S=[
-{t:"Pflegedokumentation",s:"Dokumentation",
- p:"Dokumentation bindet einen erheblichen Teil der Arbeitszeit. KI-gestützte Systeme wandeln gesprochene Notizen in strukturierten Text um, ordnen Inhalte den richtigen Feldern zu und bereiten Übergaben vor.",
- e:["Spracherkennung: Die Pflegefachperson diktiert am Bett, das System erstellt einen Entwurf für den Pflegebericht.","Automatische Zusammenfassung der letzten 24 Stunden für die Schichtübergabe.","Hinweise auf fehlende Pflichtangaben, etwa eine nicht dokumentierte Schmerzeinschätzung."],
- c:["Mehr Zeit für direkte Pflege","Vollständigere, einheitlichere Einträge","Unterstützung bei Sprachbarrieren im Team"],
- r:["Sprachmodelle können Inhalte verfälschen oder ergänzen","Verantwortung für den Eintrag bleibt bei der Pflegefachperson","Datenschutz bei cloudbasierten Diensten"],
- q:"Nach welchen Kriterien prüfst du eine automatisch erstellte Übergabe, bevor du sie freigibst?"},
-{t:"Sensorik und Sturzprävention",s:"Sensorik",
- p:"Sensoren in Matratze, Boden oder Raum erfassen Bewegung und Lage. Lernende Algorithmen erkennen Muster, zum Beispiel nächtliche Unruhe, die einem Aufstehversuch vorausgeht.",
- e:["Sensormatten und Radarsensoren melden ein Aufstehen, bevor es zum Sturz kommt.","Druckverteilungsmessung unterstützt die Einschätzung des Dekubitusrisikos und erinnert an Positionswechsel.","Auswertung von Schlaf- und Aktivitätsmustern über mehrere Tage."],
- c:["Stürze und Druckgeschwüre früher verhindern","Weniger nächtliche Kontrollgänge, mehr Ruhe","Objektive Verlaufsdaten für die Pflegeplanung"],
- r:["Fehlalarme fördern Alarmmüdigkeit","Gefühl permanenter Überwachung","Einwilligung bei kognitiv eingeschränkten Menschen ist ethisch anspruchsvoll"],
- q:"Wo verläuft für dich die Grenze zwischen Schutz und Überwachung, und wer sollte darüber entscheiden?"},
-{t:"Frühwarnsysteme",s:"Frühwarnung",
- p:"KI-Systeme werten Vitalparameter, Laborwerte und Dokumentation kontinuierlich aus und weisen auf eine mögliche Verschlechterung hin, häufig bevor sie klinisch offensichtlich wird.",
- e:["Früherkennung von Sepsis oder Delir aus der Kombination vieler Einzelwerte.","Automatische Berechnung von Frühwarnscores aus Puls, Atemfrequenz, Blutdruck, Temperatur und Bewusstseinslage.","Priorisierung: Welche Patientin sollte als Nächstes gesehen werden?"],
- c:["Verschlechterungen früher erkennen","Entscheidungshilfe bei hoher Arbeitsdichte","Gemeinsame Datenbasis mit dem ärztlichen Dienst"],
- r:["Trainingsdaten können Gruppen unterrepräsentieren und Ergebnisse verzerren","Klinische Einschätzung darf nicht verkümmern","Zu viele Warnungen werden ignoriert"],
- q:"Wie gehst du vor, wenn deine klinische Einschätzung und der berechnete Score sich widersprechen?"},
-{t:"Arzneimitteltherapiesicherheit",s:"Medikation",
- p:"Mit der Zahl gleichzeitig eingenommener Medikamente steigt das Risiko für Fehler und Wechselwirkungen. Digitale Assistenzsysteme prüfen Verordnungen und unterstützen beim Stellen und Verabreichen.",
- e:["Automatische Prüfung auf Wechselwirkungen, Doppelverordnungen und dokumentierte Allergien.","Plausibilitätsprüfung von Dosierungen, etwa bei eingeschränkter Nierenfunktion.","Abgleich von Medikament und Patientenarmband per Scan vor der Gabe."],
- c:["Weniger Medikationsfehler","Mehr Sicherheit bei Polypharmazie","Entlastung beim Richten"],
- r:["Häufige, wenig relevante Warnungen werden routiniert weggeklickt","Qualität hängt von gepflegten Stammdaten ab","Ersetzt nicht das Vier-Augen-Prinzip"],
- q:"Welche Art von Warnung würdest du niemals ohne Rücksprache übergehen?"},
-{t:"Robotik und Assistenz",s:"Robotik",
- p:"Roboter in der Pflege sind überwiegend spezialisierte Helfer. KI steuert ihre Navigation im Gebäude, ihre Spracherkennung oder ihre Reaktion auf Berührung.",
- e:["Autonome Transportroboter liefern Material, Wäsche oder Mahlzeiten und sparen Laufwege.","Soziale Robotik, etwa die Therapierobbe Paro, wird in der Betreuung von Menschen mit Demenz eingesetzt.","Hebehilfen und Exoskelette entlasten bei Transfers den Rücken."],
- c:["Körperliche Entlastung des Personals","Mehr Zeit für Beziehungsarbeit","Aktivierung und Gesprächsanlässe in der Betreuung"],
- r:["Darf menschliche Zuwendung nicht ersetzen","Hohe Anschaffungs- und Wartungskosten","Akzeptanz im Team und bei Bewohnenden"],
- q:"Welche Tätigkeiten in der Pflege sollten aus deiner Sicht immer beim Menschen bleiben?"},
-{t:"Dienst- und Tourenplanung",s:"Planung",
- p:"Optimierungsalgorithmen erstellen Dienstpläne und Touren in der ambulanten Pflege, die Qualifikationen, Wünsche, Fahrzeiten und gesetzliche Ruhezeiten gleichzeitig berücksichtigen.",
- e:["Tourenoptimierung mit kürzeren Fahrwegen und realistischen Zeitfenstern pro Einsatz.","Dienstplanvorschläge, die Wunschdienste und eine faire Verteilung einbeziehen.","Prognose des Personalbedarfs, etwa in der Infektsaison."],
- c:["Transparentere, fairere Pläne","Weniger Überstunden und Leerlauf","Schnelleres Reagieren bei Ausfällen"],
- r:["Reine Effizienzoptimierung kann Pflegezeit pro Person verkürzen","Entscheidungen müssen nachvollziehbar bleiben","Mitbestimmung der Beschäftigten"],
- q:"Wer sollte bei einem algorithmisch erstellten Dienstplan das letzte Wort haben?"},
-{t:"Ethik, Recht und Datenschutz",s:"Ethik & Recht",
- p:"Pflege arbeitet mit besonders sensiblen Daten und mit Menschen, die häufig verletzlich sind. Für KI gelten hier deshalb hohe rechtliche und ethische Anforderungen.",
- e:["Gesundheitsdaten zählen nach Art. 9 DSGVO zu den besonders geschützten Kategorien personenbezogener Daten.","Die europäische KI-Verordnung (AI Act) reguliert KI nach Risikostufen; KI in Medizinprodukten gilt in der Regel als Hochrisiko-System mit Pflichten zu Datenqualität, Transparenz und menschlicher Aufsicht.","Betroffene sollen erkennen können, wenn KI an Entscheidungen über sie beteiligt ist."],
- c:["Klare Regeln schaffen Vertrauen","Pflege kann Einführung und Auswahl aktiv mitgestalten","Ethische Fallbesprechungen gewinnen an Bedeutung"],
- r:["Haftungsfragen bei Fehlentscheidungen","Würde und Selbstbestimmung müssen gewahrt bleiben","Digitale Kompetenz im Team muss aufgebaut werden"],
- q:"Wie würdest du einer Bewohnerin verständlich erklären, welche Daten ein KI-System über sie auswertet?"}
+{t:"Ausgangslage: Fachkräftemangel und demografischer Wandel",s:"Ausgangslage",
+ p:"Die Pflege steht unter wachsendem Druck: Es werden immer mehr Pflegekräfte gebraucht, während die Bevölkerung altert und mehr Menschen mit Demenz versorgt werden müssen.",
+ sec:[["Fachkräftemangel",["Der Bedarf an Pflegekräften steigt bis zum Jahr 2049 um rund ein Drittel auf etwa 2,15 Millionen."]],
+      ["Demografischer Wandel",["Es gibt immer mehr ältere Menschen und damit mehr Menschen mit Demenz.","Die Zahl der Demenzerkrankungen steigt inzwischen auch bei Jüngeren."]]],
+ q:"Was bedeutet es für die Versorgung, wenn der Bedarf schneller wächst als die Zahl der Pflegekräfte?",
+ src:[["Statistisches Bundesamt: Pflegekräftevorausberechnung (2024)","https://www.destatis.de/DE/Presse/Pressemitteilungen/2024/01/PD24_033_23_12.html"],["Pharmazeutische Zeitung: Die Zahlen steigen auch bei den Jüngeren","https://www.pharmazeutische-zeitung.de/die-zahlen-steigen-auch-bei-den-juengeren-135029/"]]},
+{t:"Belastung, Bürokratie und schwache Digitalisierung",s:"Belastung",
+ p:"Pflegekräfte arbeiten oft am Limit, und ein großer Teil ihrer Zeit fließt nicht in die Versorgung, sondern in Verwaltung. Gleichzeitig ist die Digitalisierung vieler Einrichtungen noch nicht weit.",
+ sec:[["Hohe Belastung",["Hohe Krankenstände: Altenpflege 33,2 und Krankenpflege 25,7 Fehltage im Jahr, andere Berufe 18,2.","Viele Überstunden.","Jede fünfte Pflegekraft denkt darüber nach, ihren Beruf aufzugeben."]],
+      ["Dokumentationsaufwand",["Knapp 3 Stunden täglich gehen für bürokratische Aufgaben verloren (Stand 2024).","Ein Drittel ist bei der Arbeit mit Dokumentationsaufgaben beschäftigt statt mit Patientinnen und Patienten.","Eine Stunde weniger Dokumentation pro Tag würde rechnerisch rund 42.870 Pflegekräfte für patientennahe Tätigkeiten freisetzen."]],
+      ["Schwache Digitalisierung (Diakonie-Umfrage 2024, 494 Einrichtungen)",["85 % nutzen bereits eine elektronische Pflegedokumentation.","38 % planen noch keinen Anschluss an die Telematikinfrastruktur.","76 % sehen technische Unterstützung und Personalschulungen als große Herausforderung."]]],
+ q:"Welche Aufgaben in deinem Arbeitsalltag kosten Zeit, ohne dem Menschen direkt zu helfen?",
+ src:[["evangelisch.de: Studie – Pflegekräfte sind zu sehr belastet (2022)","https://www.evangelisch.de/inhalte/209182/07-12-2022/studie-pflegekraefte-sind-zu-sehr-belastet"],["Ärzteblatt: Aktuelle Umfrage – So groß ist die Bürokratiebelastung","https://aerztestellen.aerzteblatt.de/de/redaktion/aktuelle-umfrage-so-gross-ist-die-buerokratiebelastung-kliniken"],["Diakonie: Umfrage zu Digitalisierung und Telematikinfrastruktur (2024)","https://www.diakonie.de/diakonie_de/user_upload/diakonie.de/PDFs/Publikationen/Ergebnisse_Umfrage_zu_Digitalisierung_und_Telematikinfrastruktur_in_der_Diakonie.pdf"]]},
+{t:"Dokumentation mit KI",s:"Dokumentation",
+ p:"Hier setzt KI heute am direktesten an: Sie senkt den Verwaltungsaufwand und gibt Zeit für die Versorgung zurück.",
+ sec:[["Was KI schon übernehmen kann",["Spracheingabe statt Tippen.","Berichte automatisch strukturieren.","Entwürfe für die Pflegeplanung erstellen, die Freigabe erfolgt durch die Pflegefachkraft."]]],
+ pc:[["Chancen",["Mehr Zeit für direkte Pflege","Vollständigere, einheitlichere Einträge"]],["Grenzen",["KI kann Inhalte falsch wiedergeben","Verantwortung bleibt bei der Pflegefachkraft"]]],
+ q:"Nach welchen Kriterien prüfst du einen KI-Entwurf, bevor du ihn freigibst?",
+ src:[["noa notes","https://noa-notes.org/non-brand"]]},
+{t:"KI-Sturzerkennung",s:"Sturzerkennung",
+ p:"Sensoren im Zimmer oder am Bett erfassen Bewegungen. Eine KI wertet sie aus und reagiert, bevor oder sobald etwas passiert.",
+ sec:[["Was KI schon übernehmen kann",["Sensoren erkennen Stürze und alarmieren das Personal.","Risikomuster werden früh erkannt (Sturzprognose)."]]],
+ pc:[["Chancen",["Schnellere Hilfe nach einem Sturz","Stürze durch frühe Warnung vermeiden"]],["Grenzen",["Fehlalarme","Datenschutz"]]],
+ q:"Wo verläuft für dich die Grenze zwischen Schutz und Überwachung?",
+ src:[["MOBOTIX: KI-Sturzerkennung – mehr Patientensicherheit","https://www.mobotix.com/de/sturzerkennungstechnologie-wie-ki-verletzungen-reduziert-und-leben-rettet"]]},
+{t:"Interaktion mit Robotern",s:"Roboter",
+ p:"Soziale und assistive Roboter können mit Menschen sprechen und sie zu Aktivitäten anregen, besonders in der Betreuung älterer Menschen.",
+ sec:[["Was KI schon übernehmen kann",["Gespräche führen und auf Fragen reagieren.","Übungen anleiten, etwa Bewegungs- oder Gedächtnistraining."]]],
+ pc:[["Chancen",["Aktivierung und Abwechslung","Entlastung bei wiederkehrenden Angeboten"]],["Grenzen",["Ersetzt keine menschliche Zuwendung","Kosten und Akzeptanz"]]],
+ q:"Welche Formen von Zuwendung kann ein Roboter nicht leisten?",src:[]},
+{t:"Was KI in Zukunft übernehmen kann",s:"Zukunft",
+ p:"Ein Ausblick auf Einsatzfelder, die bereits erprobt werden und in Zukunft an Bedeutung gewinnen könnten.",
+ sec:[["Mögliche Entwicklungen",["Frühwarnsysteme, die aus Vitalwerten eine Verschlechterung früh erkennen, etwa bei Sepsis oder Delir.","Prüfung der Medikation auf Wechselwirkungen und Dosierungsfehler.","Dienst- und Tourenplanung, die Qualifikationen, Wünsche und Fahrzeiten berücksichtigt.","Vollständig KI-gestützte Pflegeplanung, weiterhin mit Freigabe durch Fachkräfte."]]],
+ q:"Welche dieser Entwicklungen würde deinen Arbeitsalltag am stärksten verändern?",src:[]},
+{t:"Rechtliche Rahmenbedingungen",s:"Recht",
+ p:"KI in der Pflege bewegt sich in einem engen rechtlichen Rahmen. Die Verantwortung bleibt immer beim Menschen.",
+ law:[["KI-Verordnung","Hochrisiko prüfen, menschliche Aufsicht dokumentieren, Mitarbeitende schulen."],["MDR","Dient die KI der Diagnose oder Therapie, braucht sie eine CE-Kennzeichnung."],["DSGVO","Gesundheitsdaten brauchen eine Rechtsgrundlage, eine Datenschutz-Folgenabschätzung und einen Auftragsverarbeitungsvertrag."],["PflBG § 4","Vorbehaltsaufgaben, die nur Pflegefachkräfte ausführen dürfen, bleiben bei Pflegefachpersonen. KI unterstützt nur."],["SGB XI §§ 113, 114","KI-Pflegepläne müssen von einer Pflegefachkraft geprüft und freigegeben werden."],["Haftung","Die Verantwortung bleibt bei Pflegekraft und Träger. Die Prüfung wird dokumentiert."]],
+ q:"Wie dokumentierst du, dass du einen KI-Vorschlag geprüft hast?",
+ src:[["Grant Thornton: KI-Verordnung – Hochrisiko-KI im Gesundheitswesen","https://www.grantthornton.de/themen/2025/ki-verordnung-der-eu-hochrisiko-ki-systeme-im-gesundheitswesen/"],["Dr. Datenschutz: Datenschutz in der Pflege","https://www.dr-datenschutz.de/datenschutz-in-der-pflege-teil-1/"],["KI-Syndikat: Use Case Pflegeplanung","https://www.ki-syndikat.de/usecases/pflege/08-pflegeplanung/"]]},
+{t:"Philosophisch gesehen: KI und Menschenwürde",s:"Ethik",
+ p:"Neben der Frage, was technisch möglich ist, steht die Frage, was dem Menschen gerecht wird.",
+ cite:["Immanuel Kant, Selbstzweckformel","Die Menschheit in jeder Person ist immer „zugleich als Zweck, niemals bloß als Mittel“ zu behandeln."],
+ sec:[["Stimmen aus der aktuellen Debatte",["Die Enzyklika erinnert daran, dass sich menschliche Erfahrung, Beziehungen, Verantwortung und Verletzlichkeit nicht auf Datenverarbeitung reduzieren lassen.","Mit der Verbreitung von KI geht es nicht nur um Effizienz und Innovation, sondern auch um Verantwortung, Freiheit, Teilhabe und gesellschaftlichen Zusammenhalt."]],
+      ["Bedeutung für die Pflege",["Pflegebedürftige dürfen nicht zum bloßen Datenpunkt werden.","Gewonnene Zeit sollte in Zuwendung fließen, nicht nur in mehr Effizienz."]]],
+ q:"Wann würde KI einen Menschen in der Pflege „bloß als Mittel“ behandeln?",
+ src:[["Konrad-Adenauer-Stiftung: KI und Menschenwürde","https://www.kas.de/de/veranstaltungsberichte/detail/-/content/ki-und-menschenwuerde"]]},
+{t:"Fazit: Pro und Contra",s:"Fazit",
+ p:"Die Abwägung aus allen Stationen: KI kann die Pflege spürbar entlasten, aber nur als Unterstützung unter der Verantwortung von Pflegefachpersonen.",
+ pc:[["Pro",["Weniger Dokumentationsaufwand, mehr Zeit für Patientinnen und Patienten","Entlastung angesichts des Fachkräftemangels","Stürze schneller erkennen und Risiken früh sehen","Aktivierung durch Roboter in der Betreuung"]],["Contra",["Fehlalarme und Fehler der KI","Datenschutz bei sensiblen Gesundheitsdaten","Prüf- und Dokumentationspflichten, offene Haftungsfragen","Schwache Digitalisierung und Kosten","Beziehung und Menschenwürde sind nicht ersetzbar"]]],
+ q:"Wie würdest du die Forschungsfrage nach diesem Rundgang beantworten?",src:[]}
 ];
 const Q=[
-{q:"Wer verantwortet einen Dokumentationseintrag, den ein KI-System vorformuliert hat?",o:["Der Softwarehersteller","Die Pflegefachperson, die den Eintrag freigibt","Niemand, da der Eintrag automatisch entstanden ist"],a:1,f:"Das System liefert einen Entwurf. Wer ihn übernimmt, trägt die fachliche Verantwortung."},
-{q:"Was ist ein typisches Risiko sensorbasierter Sturzerkennung?",o:["Alarmmüdigkeit durch Fehlalarme","Sie funktioniert nur bei Tageslicht","Sie ersetzt die Pflegeplanung"],a:0,f:"Häufige Fehlalarme führen dazu, dass Warnungen weniger ernst genommen werden."},
-{q:"Warum können Frühwarnsysteme einzelne Patientengruppen benachteiligen?",o:["Sie werden absichtlich so programmiert","Sie lernen aus historischen Daten, in denen Gruppen unterrepräsentiert sein können","Sie berücksichtigen ausschließlich Laborwerte"],a:1,f:"Verzerrungen in Trainingsdaten können sich in den Ergebnissen fortsetzen."},
-{q:"Wie stuft der EU AI Act KI in Medizinprodukten in der Regel ein?",o:["Als minimales Risiko","Als grundsätzlich verboten","Als Hochrisiko-System"],a:2,f:"Daraus folgen strenge Anforderungen an Datenqualität, Transparenz und menschliche Aufsicht."},
-{q:"Welche Aussage zu sozialer Robotik in der Betreuung trifft am ehesten zu?",o:["Sie ersetzt Betreuungskräfte","Sie kann Aktivierung und Gesprächsanlässe schaffen, ersetzt aber keine Zuwendung","Sie ist nur für den häuslichen Bereich zugelassen"],a:1,f:"Soziale Robotik ist ein ergänzendes Werkzeug, kein Ersatz für Beziehung."}
+{q:"Auf wie viele Pflegekräfte steigt der Bedarf bis 2049 laut Statistischem Bundesamt?",o:["Etwa 1,2 Millionen","Etwa 2,15 Millionen","Etwa 5 Millionen"],a:1,f:"Der Bedarf steigt um rund ein Drittel auf etwa 2,15 Millionen."},
+{q:"Wie viele Fehltage pro Jahr hat die Altenpflege im Vergleich zu anderen Berufen?",o:["33,2 gegenüber 18,2","18,2 gegenüber 25,7","12,0 gegenüber 18,2"],a:0,f:"Die Altenpflege liegt mit 33,2 Fehltagen deutlich über dem Wert anderer Berufe."},
+{q:"Was gilt nach SGB XI §§ 113, 114 für einen von KI erstellten Pflegeplan?",o:["Er gilt automatisch","Eine Pflegefachkraft muss ihn prüfen und freigeben","Die Pflegekasse muss ihn genehmigen"],a:1,f:"KI liefert einen Entwurf, die Freigabe bleibt bei der Pflegefachkraft."},
+{q:"Wann braucht eine KI nach der MDR eine CE-Kennzeichnung?",o:["Immer, wenn sie Texte schreibt","Wenn sie der Diagnose oder Therapie dient","Nur bei Robotern"],a:1,f:"Dann gilt sie als Medizinprodukt."},
+{q:"Welche Grenzen hat die KI-Sturzerkennung?",o:["Fehlalarme und Datenschutz","Sie funktioniert nur tagsüber","Keine, sie ist fehlerfrei"],a:0,f:"Fehlalarme und der Umgang mit sensiblen Daten sind die zentralen Grenzen."},
+{q:"Was verlangt Kants Selbstzweckformel?",o:["Menschen nach ihrem Nutzen zu bewerten","Den Menschen immer zugleich als Zweck, niemals bloß als Mittel zu behandeln","Entscheidungen der Technik zu überlassen"],a:1,f:"Übertragen auf KI: Der Mensch darf nicht zum bloßen Datenpunkt werden."}
 ];
 const $=id=>document.getElementById(id);
 const ul=a=>"<ul>"+a.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
@@ -1209,16 +1233,18 @@ const items=[...S.map((s,i)=>({n:String(i+1),t:s.s})),{n:"?",t:"Wissenscheck"}];
 
 /* ---------- UI ---------- */
 function dock(){$("dock").innerHTML=items.map((it,i)=>`<button class="chip${seen.has(i)?" done":""}${i===cur?" on":""}" data-i="${i}"><span class="n">${it.n}</span>${it.t}</button>`).join("");}
-function prog(){const n=[...seen].filter(i=>i<7).length;$("pc").textContent=n+" von 7";$("pbar").style.width=n/7*100+"%";dock();
+function prog(){const n=[...seen].filter(i=>i<S.length).length;$("pc").textContent=n+" von "+S.length;$("pbar").style.width=n/S.length*100+"%";dock();
  labels.forEach((l,i)=>l.el.classList.toggle("done",seen.has(i)));}
 function show(i){cur=i;seen.add(i);prog();
- if(i===7){qi=0;pts=0;quiz();}else{const s=S[i];$("pk").textContent="Station "+(i+1)+" von 7";$("pt").textContent=s.t;
- $("pbody").innerHTML=`<p>${s.p}</p><h3>Einsatz im Alltag</h3>${ul(s.e)}<div class="two"><div><h3>Chancen</h3>${ul(s.c)}</div><div><h3>Grenzen und Risiken</h3>${ul(s.r)}</div></div><div class="ask"><b>Reflexionsfrage</b>${s.q}</div>
- <div class="nav">${i>0?`<button class="btn" data-go="${i-1}">Vorherige Station</button>`:"<span></span>"}<button class="btn f" data-go="${i+1}">${i<6?"Nächste Station":"Zum Wissenscheck"}</button></div>`;}
+ if(i===S.length){qi=0;pts=0;quiz();}else{const s=S[i];$("pk").textContent="Station "+(i+1)+" von "+S.length;$("pt").textContent=s.t;
+ const two=s.pc?`<div class="two">${s.pc.map(([h,l])=>`<div><h3>${h}</h3>${ul(l)}</div>`).join("")}</div>`:"";
+ $("pbody").innerHTML=`<p>${s.p}</p>${s.cite?`<blockquote class="cite"><p>${s.cite[1]}</p><span>${s.cite[0]}</span></blockquote>`:""}${(s.sec||[]).map(([h,l])=>`<h3>${h}</h3>${ul(l)}`).join("")}${s.law?`<dl class="law">${s.law.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>`:""}${two}<div class="ask"><b>Reflexionsfrage</b>${s.q}</div>
+ ${s.src.length?`<h3>Quellen</h3><ul class="src">${s.src.map(([t,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join("")}</ul>`:""}
+ <div class="nav">${i>0?`<button class="btn" data-go="${i-1}">Vorherige Station</button>`:"<span></span>"}<button class="btn f" data-go="${i+1}">${i<S.length-1?"Nächste Station":"Zum Wissenscheck"}</button></div>`;}
  document.body.classList.add("open");$("panel").scrollTop=0;fly(i);}
 function hide(){document.body.classList.remove("open");cur=-1;dock();}
 function quiz(){$("pk").textContent="Abschluss";$("pt").textContent="Wissenscheck";
- if(qi>=Q.length){const v=[...seen].filter(i=>i<7).length;$("pbody").innerHTML=`<p>Dein Ergebnis</p><div class="score">${pts} von ${Q.length}</div><p>${pts===Q.length?"Alle Fragen richtig beantwortet.":"Die Stationen lassen sich jederzeit erneut aufrufen."}${v<7?" Du hast "+v+" von 7 Stationen besucht.":""}</p><div class="nav"><button class="btn" data-go="0">Rundgang neu beginnen</button><button class="btn f" id="again">Wissenscheck wiederholen</button></div><p class="note">Dieser Lernraum dient der Orientierung und ersetzt keine Fachfortbildung, Rechts- oder Medizinberatung. Genannte Beispiele sind typische Einsatzfelder, keine Produktempfehlungen.</p>`;return;}
+ if(qi>=Q.length){const v=[...seen].filter(i=>i<S.length).length;$("pbody").innerHTML=`<p>Dein Ergebnis</p><div class="score">${pts} von ${Q.length}</div><p>${pts===Q.length?"Alle Fragen richtig beantwortet.":"Die Stationen lassen sich jederzeit erneut aufrufen."}${v<S.length?" Du hast "+v+" von "+S.length+" Stationen besucht.":""}</p><div class="nav"><button class="btn" data-go="0">Rundgang neu beginnen</button><button class="btn f" id="again">Wissenscheck wiederholen</button></div><p class="note">Dieser Lernraum dient der Orientierung und ersetzt keine Fachfortbildung, Rechts- oder Medizinberatung. Genannte Beispiele sind typische Einsatzfelder, keine Produktempfehlungen.</p>`;return;}
  const c=Q[qi];$("pbody").innerHTML=`<p style="color:var(--soft)">Frage ${qi+1} von ${Q.length}</p><p><b>${c.q}</b></p>${c.o.map((o,j)=>`<button class="opt" data-o="${j}">${o}</button>`).join("")}<p class="fb" id="fb" aria-live="polite"></p><div class="nav"><span></span><button class="btn f" id="nq" hidden>${qi<Q.length-1?"Nächste Frage":"Ergebnis anzeigen"}</button></div>`;}
 $("dock").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b)show(+b.dataset.i);});
 $("x").onclick=hide;$("home").onclick=()=>{hide();fly(-1);};
@@ -1280,8 +1306,16 @@ const sky=tex(256,256,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addCol
 screen(2.4,1.5,sky.t,1.2,1.75,-5.0,0,sc);
 box(2.8,.06,.25,fm,1.2,.9,-4.88);
 
+
+/* Fenster als Station 9 (Fazit) */
+const wpick=grp(1.2,1.75,-4.9,8);const wpm=new T.Mesh(new T.BoxGeometry(2.6,1.7,.1),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));wpick.add(wpm);
+/* Bilderrahmen Ethik */
+const fr=grp(-1.25,0,-4.97,7);box(1.0,.74,.04,M(0x2f3a3e,.5),0,1.85,0,fr);
+const kant=tex(640,460,(x,w,h)=>{x.fillStyle="#f7f4ee";x.fillRect(0,0,w,h);x.fillStyle="#1b2629";x.font="italic 500 38px Georgia, serif";x.textAlign="center";
+ ["„zugleich als Zweck,","niemals bloß","als Mittel“"].forEach((l,i)=>x.fillText(l,w/2,150+i*58));x.fillStyle="#1d6b70";x.fillRect(w/2-40,345,80,3);x.fillStyle="#566468";x.font="500 26px IBM Plex Sans, sans-serif";x.fillText("Immanuel Kant",w/2,395);});
+screen(.92,.66,kant.t,0,1.85,.022,0,fr);
 /* 1 Schreibtisch */
-const d=grp(-5.25,0,1.3,0);const dw=M(0xe6e1d8,.55),dm=M(0x59636a,.4,.6);
+const d=grp(-5.25,0,1.3,2);const dw=M(0xe6e1d8,.55),dm=M(0x59636a,.4,.6);
 box(.95,.05,1.9,dw,0,.76,0,d);[[-.4,-.88],[.4,-.88],[-.4,.88],[.4,.88]].forEach(([a,b])=>cyl(.025,.025,.74,dm,a,.37,b,d,10));
 box(.36,.02,.5,M(0x9aa3a8,.35,.6),.05,.79,-.15,d);
 const lap=tex(512,340,(x,w,h)=>{x.fillStyle="#f7f9f9";x.fillRect(0,0,w,h);x.fillStyle="#1d6b70";x.fillRect(0,0,w,42);x.fillStyle="#fff";x.font="600 20px IBM Plex Sans, sans-serif";x.fillText("Pflegebericht  ·  Zimmer 12",16,28);
@@ -1294,7 +1328,7 @@ const ch=grp(-4.45,0,1.3);const chm=M(0x3e4a4f,.7);box(.5,.08,.5,chm,0,.48,0,ch)
 box(.3,.03,1.2,dw,-5.85,1.75,1.3);[["#7d8f93",.18],["#c9b48f",.22],["#4f6a6e",.2]].forEach(([c,h],i)=>box(.2,h,.07,M(c,.7),-5.85,1.77+h/2,.9+i*.09));
 
 /* 2 Bett */
-const b=grp(.7,0,-2.0,1);const bf=M(0xd9dedf,.4,.3),wh=M(0xffffff,.85),met=M(0x9aa5a8,.3,.7);
+const b=grp(.7,0,-2.0,3);const bf=M(0xd9dedf,.4,.3),wh=M(0xffffff,.85),met=M(0x9aa5a8,.3,.7);
 box(1.05,.12,2.15,bf,0,.5,0,b);[[-.45,-.95],[.45,-.95],[-.45,.95],[.45,.95]].forEach(([a,z])=>{cyl(.03,.03,.38,met,a,.25,z,b,10);const w=cyl(.06,.06,.04,M(0x2b3236,.6),a,.06,z,b,16);w.rotation.z=Math.PI/2;});
 box(1.0,.2,2.05,wh,0,.66,0,b);
 const sensor=box(1.01,.02,2.06,M(0x1d6b70,.4,0,{emissive:0x2aa6a0,emissiveIntensity:.9}),0,.565,0,b);
@@ -1306,7 +1340,7 @@ box(1.12,.7,.06,M(0xc6cfd1,.45,.2),0,.85,-1.08,b);box(1.12,.45,.06,M(0xc6cfd1,.4
 const nt=grp(-.45,0,-3.6);box(.5,.62,.45,M(0xe6e1d8,.6),0,.31,0,nt);cyl(.035,.03,.12,M(0xdfeef0,.2,0,{transparent:true,opacity:.7}),.1,.68,0,nt,16);
 
 /* 3 Monitor */
-const mo=grp(1.9,0,-3.35,2);cyl(.3,.3,.03,met,0,.05,0,mo,5);cyl(.025,.025,1.55,met,0,.82,0,mo,10);
+const mo=grp(1.9,0,-3.35,5);cyl(.3,.3,.03,met,0,.05,0,mo,5);cyl(.025,.025,1.55,met,0,.82,0,mo,10);
 box(.68,.48,.07,M(0x2b3236,.4,.3),0,1.68,0,mo);
 const ecg=tex(512,360,()=>{});screen(.6,.42,ecg.t,0,1.68,.037,0,mo);mo.rotation.y=-.35;
 let ph=0;function drawEcg(dt){const x=ecg.x,w=512,h=360;ph+=dt*120;x.fillStyle="#071a1c";x.fillRect(0,0,w,h);
@@ -1321,74 +1355,78 @@ let ph=0;function drawEcg(dt){const x=ecg.x,w=512,h=360;ph+=dt*120;x.fillStyle="
 drawEcg(0);
 
 /* 4 Medikamentenschrank */
-const mc=grp(-2.9,0,-4.68,3);const cw=M(0xf4f5f4,.5);
+const mc=grp(-2.9,0,-4.68,1);const cw=M(0xf4f5f4,.5);
 box(1.15,2.05,.6,cw,0,1.025,0,mc);box(1.03,1.9,.02,M(0xdfe3e3,.8),0,1.03,.27,mc);
 [.45,.95,1.45].forEach(y=>box(1.03,.025,.52,cw,0,y,.0,mc));
-const pc=[0xb8c9c6,0x88a7ab,0xe2d6c0,0xc9cfd6,0x6f8f92,0xdcc8b4];
-[.47,.97,1.47].forEach((y,r)=>{for(let k=0;k<5;k++)box(.15,.16+((k+r)%3)*.05,.2,M(pc[(k+r)%6],.7),-.38+k*.19,y+.1+((k+r)%3)*.025,.08,mc);});
+const pc=[0x6f8f92,0xc9b48f,0x4f6a6e,0xb8c9c6,0x8a9aa0,0xd8cdb8];
+[.47,.97,1.47].forEach((y,r)=>{for(let k=0;k<12;k++)box(.07,.36,.26,M(pc[(k+r)%6],.7),-.44+k*.08,y+.2,.06,mc);});
 const gl=new T.Mesh(new T.PlaneGeometry(1.05,1.92),new T.MeshStandardMaterial({color:0xdff0f2,roughness:.05,metalness:.1,transparent:true,opacity:.22}));gl.position.set(0,1.03,.305);mc.add(gl);
 box(.012,1.9,.03,met,0,1.03,.31,mc);box(.03,.2,.03,met,-.07,1.1,.33,mc);box(.03,.2,.03,met,.07,1.1,.33,mc);
-const cl=tex(256,64,(x,w,h)=>{x.fillStyle="#1d6b70";x.fillRect(0,0,w,h);x.fillStyle="#fff";x.font="600 26px IBM Plex Sans, sans-serif";x.textAlign="center";x.fillText("Medikamente",w/2,42);});
+const cl=tex(256,64,(x,w,h)=>{x.fillStyle="#1d6b70";x.fillRect(0,0,w,h);x.fillStyle="#fff";x.font="600 26px IBM Plex Sans, sans-serif";x.textAlign="center";x.fillText("Akten",w/2,42);});
 screen(.6,.15,cl.t,0,1.88,.312,0,mc);
 
 /* 5 Roboter */
 const rb=grp(2.6,0,1.6,4);const rw=M(0xf2f4f4,.35,.1),rd=M(0x2e3a3f,.5,.2);
 cyl(.34,.36,.22,rd,0,.13,0,rb,32);cyl(.28,.32,.85,rw,0,.66,0,rb,32);box(.46,.03,.36,M(0xcfd6d7,.4,.4),0,1.0,0,rb);
 cyl(.06,.06,.3,met,0,1.17,0,rb,12);
-const rs=tex(384,240,(x,w,h)=>{x.fillStyle="#0e2326";x.fillRect(0,0,w,h);x.fillStyle="#4fb3b5";x.fillRect(0,0,w,8);x.fillStyle="#e6eeee";x.font="500 26px IBM Plex Sans, sans-serif";x.fillText("Materialtransport",22,70);x.font="600 52px IBM Plex Sans, sans-serif";x.fillText("→ Zi. 14",22,150);x.fillStyle="#9fb0b2";x.font="400 22px IBM Plex Sans, sans-serif";x.fillText("Ankunft in 2 Min.",22,200);});
+const rs=tex(384,240,(x,w,h)=>{x.fillStyle="#0e2326";x.fillRect(0,0,w,h);x.fillStyle="#4fb3b5";x.fillRect(0,0,w,8);x.fillStyle="#e6eeee";x.font="500 26px IBM Plex Sans, sans-serif";x.fillText("Bewegungsübung",22,70);x.font="600 52px IBM Plex Sans, sans-serif";x.fillText("3 von 5",22,150);x.fillStyle="#9fb0b2";x.font="400 22px IBM Plex Sans, sans-serif";x.fillText("Arme langsam heben",22,200);});
 const head=new T.Group();head.position.set(0,1.45,0);rb.add(head);box(.5,.32,.06,rd,0,0,0,head);screen(.45,.28,rs.t,0,0,.032,0,head);
 const ring=cyl(.345,.345,.03,M(0x1d6b70,.4,0,{emissive:0x2aa6a0,emissiveIntensity:.8}),0,.25,0,rb,32);
 box(.4,.22,.3,M(0xe3ddd2,.8),0,1.13-.02,-.0,rb).position.y=1.13;
 
 /* 6 Planungstafel */
-const pl=grp(-5.97,0,-2.4,5);
+const pl=grp(-5.97,0,-2.4,0);
 box(.04,1.3,2.3,M(0xb9c2c3,.4,.5),0,1.75,0,pl);
-const board=tex(1024,576,(x,w,h)=>{x.fillStyle="#fbfcfc";x.fillRect(0,0,w,h);x.fillStyle="#1b2629";x.font="600 34px IBM Plex Sans, sans-serif";x.fillText("Dienstplan KW 47",40,60);
- x.font="500 22px IBM Plex Sans, sans-serif";["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((t,i)=>x.fillText(t,190+i*110,110));["Früh","Spät","Nacht"].forEach((t,i)=>x.fillText(t,40,170+i*80));
- x.strokeStyle="#dde3e3";x.lineWidth=2;for(let i=0;i<=3;i++){x.beginPath();x.moveTo(40,128+i*80);x.lineTo(970,128+i*80);x.stroke();}
- const cs=["#cfe3e2","#e7dcc7","#d7dce3","#b9d3d1"];for(let r=0;r<3;r++)for(let c=0;c<7;c++){if((r*7+c)%5===3)continue;x.fillStyle=cs[(r+c)%4];x.fillRect(180+c*110,138+r*80,96,58);x.fillStyle="#3e4a4f";x.font="500 18px IBM Plex Sans, sans-serif";x.fillText(["AK","MB","TS","LW","NP","JR"][(r*3+c)%6],196+c*110,173+r*80);}
- x.strokeStyle="#1d6b70";x.lineWidth=4;x.setLineDash([10,8]);x.beginPath();x.moveTo(60,500);x.bezierCurveTo(240,420,380,560,560,470);x.bezierCurveTo(700,400,820,520,960,450);x.stroke();x.setLineDash([]);
- x.fillStyle="#1d6b70";[[60,500],[560,470],[960,450]].forEach(([a,c])=>{x.beginPath();x.arc(a,c,9,0,7);x.fill();});x.fillStyle="#566468";x.font="500 20px IBM Plex Sans, sans-serif";x.fillText("Tour ambulant: 6 Einsätze · 41 km",600,540);});
+const board=tex(1024,576,(x,w,h)=>{x.fillStyle="#fbfcfc";x.fillRect(0,0,w,h);x.fillStyle="#1b2629";x.font="600 36px IBM Plex Sans, sans-serif";x.fillText("Ausgangslage",40,62);
+ x.font="500 22px IBM Plex Sans, sans-serif";x.fillStyle="#566468";x.fillText("Bedarf an Pflegekräften bis 2049",40,112);
+ x.fillStyle="#1d6b70";x.font="600 74px IBM Plex Sans, sans-serif";x.fillText("2,15 Mio.",40,196);x.font="500 26px IBM Plex Sans, sans-serif";x.fillText("+ ein Drittel",40,236);
+ x.fillStyle="#566468";x.font="500 22px IBM Plex Sans, sans-serif";x.fillText("Fehltage pro Jahr",540,112);
+ [["Altenpflege",33.2,"#1d6b70"],["Krankenpflege",25.7,"#4f8f93"],["andere Berufe",18.2,"#b9c2c3"]].forEach(([l,v,c],i)=>{const y=140+i*62;x.fillStyle=c;x.fillRect(540,y,v*12,40);x.fillStyle="#1b2629";x.font="500 20px IBM Plex Sans, sans-serif";x.fillText(l+"  "+String(v).replace(".",","),540,y+62-6);});
+ x.strokeStyle="#dde3e3";x.lineWidth=2;x.beginPath();x.moveTo(40,350);x.lineTo(984,350);x.stroke();
+ x.fillStyle="#1b2629";x.font="600 26px IBM Plex Sans, sans-serif";x.fillText("≈ 3 Std. täglich Bürokratie",40,410);x.fillText("Mehr Menschen mit Demenz",540,410);
+ x.fillStyle="#566468";x.font="400 21px IBM Plex Sans, sans-serif";x.fillText("1 Std. weniger = rund 42.870 Pflegekräfte",40,450);x.fillText("Demografischer Wandel",540,450);
+ x.fillText("mehr für patientennahe Arbeit",40,480);x.fillText("Jede 5. Pflegekraft erwägt den Ausstieg",540,480);});
 screen(2.2,1.24,board.t,.025,1.75,0,Math.PI/2,pl);
 
 /* 7 Bücherregal */
 const bs=grp(4.25,0,-4.78,6);const sw=M(0x8a6a4c,.6);
-box(1.7,1.9,.38,sw,0,.95,0,bs);box(1.6,1.8,.02,M(0x6e5239,.8),0,.95,-.17,bs);
+box(.05,1.9,.38,sw,-.83,.95,0,bs);box(.05,1.9,.38,sw,.83,.95,0,bs);box(1.7,.05,.38,sw,0,1.88,0,bs);box(1.6,1.8,.02,M(0x6e5239,.8),0,.95,-.17,bs);
 [.08,.55,1.02,1.49].forEach(y=>box(1.6,.04,.34,sw,0,y+.02,.0,bs));
 const bc=[0x4f6a6e,0xc9b48f,0x7d8f93,0x9c5f4a,0x2f4447,0xd8d2c4,0x6f8f92];
 [.1,.57,1.04,1.51].forEach((y,r)=>{let xx=-.74;for(let k=0;xx<.62;k++){const wd=.05+((k*7+r)%4)*.015,hh=.3+((k*5+r)%5)*.03;const bk=box(wd,hh,.24,M(bc[(k+r*3)%7],.8),xx+wd/2,y+.04+hh/2,.02,bs);if(k%9===5)bk.rotation.z=.12;xx+=wd+.008;}});
 
 /* Pflanze */
-const pt=grp(3.3,0,-4.35);cyl(.22,.17,.42,M(0xe4ded4,.8),0,.21,0,pt,24);
+const pt=grp(5.55,0,-4.45);cyl(.22,.17,.42,M(0xe4ded4,.8),0,.21,0,pt,24);
 for(let i=0;i<9;i++){const l=new T.Mesh(new T.IcosahedronGeometry(.16+(i%3)*.05,0),M(0x5f7f5a,.8));l.position.set(Math.sin(i*2.1)*.18,.55+(i%4)*.16,Math.cos(i*2.1)*.18);l.castShadow=true;pt.add(l);}
 
 /* 8 Tür / Ausgang */
-const dr=grp(-4.85,0,-4.98,7);
+const dr=grp(-4.85,0,-4.98,9);
 box(1.08,2.2,.06,M(0xc6cfd1,.45,.2),0,1.1,0,dr);box(.96,2.12,.05,M(0xe8e3d9,.6),0,1.06,.03,dr);
 box(.16,.03,.05,met,.36,1.02,.08,dr);
 const ex=tex(320,110,(x,w,h)=>{x.fillStyle="#17834a";x.fillRect(0,0,w,h);x.fillStyle="#fff";x.font="600 40px IBM Plex Sans, sans-serif";x.textAlign="center";x.fillText("Wissenscheck",w/2,70);});
 const exs=screen(.66,.23,ex.t,0,2.45,.04,0,dr);
 
 /* Labels */
-const A=[[-5.2,1.35,1.2],[.7,1.25,-1.6],[1.9,2.1,-3.3],[-2.9,2.3,-4.4],null,[-5.9,2.62,-2.4],[4.25,2.15,-4.6],[-4.85,2.75,-4.9]];
-const V=[[[-2.3,2.3,3.4],[-5.1,.95,1.25]],[[3.4,3.1,1.4],[.7,.65,-2.0]],[[3.2,2.1,-.9],[1.8,1.55,-3.3]],[[-1.7,2.0,-1.3],[-2.9,1.15,-4.6]],null,[[-2.5,2.05,-1.3],[-5.9,1.7,-2.4]],[[4.6,2.2,-1.5],[4.25,1.05,-4.7]],[[-3.9,2.0,-1.7],[-4.85,1.25,-4.9]]];
-labels=items.map((it,i)=>{const el=document.createElement("button");el.className="lbl";el.innerHTML=`<span class="n">${it.n}</span><span class="t">${i<7?S[i].s:it.t}</span>`;el.setAttribute("aria-label",(i<7?"Station "+(i+1)+": ":"")+(i<7?S[i].t:it.t));el.onclick=()=>show(i);$("labels").appendChild(el);return{el};});
+const A=[[-5.9,2.62,-2.4],[-2.9,2.3,-4.4],[-5.2,1.35,1.2],[.7,1.25,-1.6],null,[1.9,2.1,-3.3],[4.25,2.15,-4.6],[-1.2,2.4,-4.9],[1.2,2.85,-4.9],[-4.85,2.75,-4.9]];
+const V=[[[-2.5,2.05,-1.3],[-5.9,1.7,-2.4]],[[-1.7,2.0,-1.3],[-2.9,1.15,-4.6]],[[-2.3,2.3,3.4],[-5.1,.95,1.25]],[[3.4,3.1,1.4],[.7,.65,-2.0]],null,[[3.2,2.1,-.9],[1.8,1.55,-3.3]],[[4.6,2.2,-1.5],[4.25,1.05,-4.7]],[[-.5,1.95,-1.7],[-1.2,1.8,-4.95]],[[2.0,2.0,-.7],[1.2,1.7,-4.95]],[[-3.9,2.0,-1.7],[-4.85,1.25,-4.9]]];
+labels=items.map((it,i)=>{const el=document.createElement("button");el.className="lbl";el.innerHTML=`<span class="n">${it.n}</span><span class="t">${it.t}</span>`;el.setAttribute("aria-label",(i<S.length?"Station "+(i+1)+": "+S[i].t:it.t));el.onclick=()=>show(i);$("labels").appendChild(el);return{el};});
 const v3=new T.Vector3();
 function anchor(i){return i===4?v3.set(rb.position.x,1.9,rb.position.z):v3.set(...A[i]);}
 
 /* Kameraflug */
 let F=null;
 fly=i=>{let p,t;if(i<0){t=HOME.t.clone();p=homeP();}else if(i===4){t=new T.Vector3(rb.position.x,1.0,rb.position.z);p=t.clone().add(new T.Vector3(2.4,1.4,2.6));}else{p=new T.Vector3(...V[i][0]);t=new T.Vector3(...V[i][1]);}
- if(innerWidth>700&&i>=0){const dir=t.clone().sub(p).normalize(),side=new T.Vector3().crossVectors(dir,new T.Vector3(0,1,0)).normalize();t.add(side.clone().multiplyScalar(.55));p.add(side.multiplyScalar(.55));}
+ if(innerWidth>700&&i>=0){const dist=t.distanceTo(p),dir=t.clone().sub(p).normalize(),side=new T.Vector3().crossVectors(dir,new T.Vector3(0,1,0)).normalize().multiplyScalar(dist*.16);t.add(side);p.add(side);}
+ if(innerWidth<=700&&i>=0){p=t.clone().add(p.clone().sub(t).multiplyScalar(1.35));t.y-=t.distanceTo(p)*.28;}
  if(RM){cam.position.copy(p);ctl.target.copy(t);return;}
- F={p0:cam.position.clone(),t0:ctl.target.clone(),p,t,k:0};};
+ F={p0:cam.position.clone(),t0:ctl.target.clone(),p,t,k:0,s:performance.now()};};
 
 /* Interaktion */
 const ray=new T.Raycaster(),ms=new T.Vector2();let down=null,hot=-1;
 function hit(e){const r=cv.getBoundingClientRect();ms.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(ms,cam);
  const h=ray.intersectObjects(pick,true)[0];if(!h)return -1;let o=h.object;while(o&&o.userData.st==null)o=o.parent;return o?o.userData.st:-1;}
 cv.addEventListener("pointerdown",e=>{down=[e.clientX,e.clientY];$("hint").style.opacity=0;});
-cv.addEventListener("pointerup",e=>{if(down&&Math.hypot(e.clientX-down[0],e.clientY-down[1])<6){const s=hit(e);if(s>=0)show(s);}down=null;});
+cv.addEventListener("pointerup",e=>{if(down&&Math.hypot(e.clientX-down[0],e.clientY-down[1])<6){const s=hit(e);if(s>=0)show(s);else if(innerWidth<=700&&document.body.classList.contains("open"))hide();}down=null;});
 cv.addEventListener("pointermove",e=>{if(e.pointerType!=="mouse"||e.buttons)return;const s=hit(e);if(s!==hot){if(hot>=0)labels[hot].el.classList.remove("hot");hot=s;if(s>=0)labels[s].el.classList.add("hot");cv.style.cursor=s>=0?"pointer":"grab";}});
 ctl.addEventListener("start",()=>{F=null;});
 setTimeout(()=>{$("hint").style.opacity=0;},7000);
@@ -1398,7 +1436,7 @@ new ResizeObserver(size).observe(cv);size();cam.position.copy(homeP());
 
 const clk=new T.Clock();let et=0,ecgT=0;
 (function loop(){requestAnimationFrame(loop);const dt=Math.min(clk.getDelta(),.05);et+=dt;
- if(F){F.k=Math.min(1,F.k+dt/1.2);const e=F.k<.5?4*F.k**3:1-(-2*F.k+2)**3/2;cam.position.lerpVectors(F.p0,F.p,e);ctl.target.lerpVectors(F.t0,F.t,e);if(F.k>=1)F=null;}
+ if(F){F.k=Math.min(1,(performance.now()-F.s)/1200);const e=F.k<.5?4*F.k**3:1-(-2*F.k+2)**3/2;cam.position.lerpVectors(F.p0,F.p,e);ctl.target.lerpVectors(F.t0,F.t,e);if(F.k>=1)F=null;}
  ctl.update();
  if(!RM){const a=et*.25;rb.position.set(2.7+Math.sin(a)*1.1,0,1.5+Math.sin(a*2)*.55);const dx=Math.cos(a)*1.1,dz=Math.cos(a*2)*1.1;rb.rotation.y=Math.atan2(dx,dz);
   sensor.material.emissiveIntensity=.55+Math.sin(et*2)*.35;ring.material.emissiveIntensity=.5+Math.sin(et*3)*.3;
